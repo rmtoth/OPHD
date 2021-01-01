@@ -1,5 +1,8 @@
 version: 2.1
 
+orbs:
+  win: circleci/windows@2.4.0
+
 commands:
   build:
     steps:
@@ -63,6 +66,11 @@ jobs:
       - brew-install:
           packages: physfs sdl2 sdl2_image sdl2_mixer sdl2_ttf libpng libjpeg libtiff webp libmodplug libvorbis libogg freetype glew googletest
       - build
+  build-windows:
+    executor: win/default
+    steps:
+      - checkout
+      - run: msbuild OPHD.sln
 
 workflows:
   build:
@@ -72,3 +80,4 @@ workflows:
       - build-linux-clang
       - build-linux-mingw
       - build-macos
+      - build-windows
