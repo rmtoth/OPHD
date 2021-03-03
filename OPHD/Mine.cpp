@@ -269,14 +269,14 @@ int Mine::pull(OreType type, int quantity)
 
 		if (vein[type] >= to_pull)
 		{
-			pulled_count = to_pull;
+			pulled_count += to_pull;
 			vein[type] -= to_pull;
 			break;
 		}
-		else if (vein[type] < to_pull)
+		else
 		{
 			pulled_count += vein[type];
-			to_pull = to_pull - vein[type];
+			to_pull -= vein[type];
 			vein[type] = 0;
 		}
 	}
