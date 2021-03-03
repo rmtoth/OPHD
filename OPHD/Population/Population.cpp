@@ -21,9 +21,9 @@ namespace {
 
 
 	std::default_random_engine pop_generator;
-	std::uniform_int_distribution<int> pop_distribution(0, 100);
+	std::uniform_int_distribution<int> pop_distribution(0, 99);
 
-	auto random_0_100 = std::bind(pop_distribution, pop_generator);
+	auto random_0_99 = std::bind(pop_distribution, pop_generator);
 
 	/**
 	 * Convenience function to cast a MoraleLevel enumerator
@@ -39,7 +39,7 @@ namespace {
 Population::Population() :
 	mBirthCount(0),
 	mDeathCount(0),
-	mStarveRate(0.5f)
+	mStarveRate(50)
 {
 	mPopulation.fill(0);
 	mPopulationGrowth.fill(0);
@@ -153,7 +153,7 @@ void Population::spawn_adults(int universities)
 		mPopulationGrowth[PersonRole::ROLE_WORKER] = mPopulationGrowth[PersonRole::ROLE_WORKER] % divisor;
 
 		// account for universities
-		if (universities > 0 && random_0_100() <= studentToScientistRate)
+		if (universities > 0 && random_0_99() < studentToScientistRate)
 		{
 			mPopulation[PersonRole::ROLE_SCIENTIST] += newAdult;
 		}
@@ -184,7 +184,7 @@ void Population::spawn_retiree()
 		mPopulation[PersonRole::ROLE_RETIRED] += retiree;
 
 		/** Workers retire earlier than scientists. */
-		if (random_0_100() <= 45) { if (mPopulation[PersonRole::ROLE_SCIENTIST] > 0) { mPopulation[PersonRole::ROLE_SCIENTIST] -= retiree; } }
+		if (random_0_99() < 45) { if (mPopulation[PersonRole::ROLE_SCIENTIST] > 0) { mPopulation[PersonRole::ROLE_SCIENTIST] -= retiree; } }
 		else { if (mPopulation[PersonRole::ROLE_WORKER] > 0) { mPopulation[PersonRole::ROLE_WORKER] -= retiree; } }
 	}
 }
@@ -275,39 +275,46 @@ int Population::consume_food(int food)
 	}
 
 	int population_fed = food * 10;
-	if (population_fed > size())
+	if (population_fed >= size())
 	{
 		return size() / 10;
 	}
 
+	// Addition of U[0,100) ensures the correct amount of people die on average.
+	int population_to_kill = ((size() - population_fed) * mStarveRate + random_0_99()) / 100;
 
-	int population_to_kill = static_cast<int>((size() - population_fed) * mStarveRate);
-	if (size() == 1) { population_to_kill = 1; }
-
-	for (int i = 0; i < population_to_kill; /**/ )
+	// Distribute deaths evenly among roles.
+	int roles_with_nonzero_population = PersonRole::ROLE_COUNT;
+	while (population_to_kill >= roles_with_nonzero_population)
 	{
-		std::size_t role_idx = i % 5;
-
-		std::size_t counter = 0;
-		for (;;)
+		int deaths_per_role = population_to_kill / roles_with_nonzero_population;
+		roles_with_nonzero_population = PersonRole::ROLE_COUNT;
+		for (int role = 0; role < PersonRole::ROLE_COUNT; ++role)
 		{
-			role_idx = role_idx + counter;
-			if (role_idx > 4) { role_idx = 0; }
-
-			if (mPopulation[role_idx] > 0)
-			{
-				break;
-			}
-
-			++counter;
-			if (counter > 4) { counter = 0; }
+			int deaths_in_role = std::min(deaths_per_role, mPopulation[role]);
+			mPopulation[role] -= deaths_in_role;
+			mDeathCount += deaths_in_role;
+			population_to_kill -= deaths_in_role;
+			if (mPopulation[role] == 0)
+				--roles_with_nonzero_population;
 		}
-
-		--mPopulation[role_idx];
-		++i;
+		// If any role had a smaller population than deaths_per_role we may
+		// still have many deaths to distribute and will iterate once more.
 	}
 
-	mDeathCount = population_to_kill;
+	// There may be a few remaining deaths which still need to be distributed across a random subset of roles.
+	// Round-robin from a random starting role should be good enough.
+	int role = random_0_99() % PersonRole::ROLE_COUNT;
+	while (population_to_kill)
+	{
+		if (mPopulation[role] > 0)
+		{
+			--mPopulation[role];
+			++mDeathCount;
+			--population_to_kill;
+		}
+		role = (role + 1) % PersonRole::ROLE_COUNT;
+	}
 
 	// actual amount of food used for the fed part of the population.
 	return population_fed / 10;
@@ -331,7 +338,7 @@ int Population::update(int morale, int food, int residences, int universities, i
 	kill_students(morale, hospitals);
 
 	// Workers will die more often than scientists.
-	if (random_0_100() <= 45) { kill_adults(PersonRole::ROLE_SCIENTIST, morale, hospitals); }
+	if (random_0_99() < 45) { kill_adults(PersonRole::ROLE_SCIENTIST, morale, hospitals); }
 	else { kill_adults(PersonRole::ROLE_WORKER, morale, hospitals); }
 
 	kill_adults(PersonRole::ROLE_RETIRED, morale, hospitals);

@@ -15,7 +15,8 @@ public:
 		ROLE_STUDENT,
 		ROLE_WORKER,
 		ROLE_SCIENTIST,
-		ROLE_RETIRED
+		ROLE_RETIRED,
+		ROLE_COUNT
 	};
 
 
@@ -33,7 +34,7 @@ public:
 
 	int update(int morale, int food, int residences, int universities, int nurseries, int hospitals);
 
-	void starveRate(float rate) { mStarveRate = rate; }
+	void starveRate(int percentPerTurn) { mStarveRate = percentPerTurn; }
 
 private:
 	int adults() const;
@@ -50,14 +51,14 @@ private:
 	int consume_food(int _food);
 
 
-	using PopulationTable = std::array<int, 5>;
-	using MoraleModifiers = std::array<MoraleModifier, 5>;
+	using PopulationTable = std::array<int, ROLE_COUNT>;
+	using MoraleModifiers = std::array<MoraleModifier, ROLE_COUNT>;
 
 
 	int mBirthCount;
 	int mDeathCount;
 
-	float mStarveRate; /**< Amount of population that dies during food shortages in percent. */
+	int mStarveRate; /**< Amount of population that dies during food shortages in percent. */
 
 	PopulationTable mPopulation; /**< Current population. */
 	PopulationTable mPopulationGrowth; /**< Population growth table. */
