@@ -22,6 +22,20 @@ struct StorableResources;
 class StructureManager
 {
 public:
+	template<typename T>
+	std::vector<T*>& getComponents()
+	{
+		return reinterpret_cast<std::vector<T*>&>(mComponents[T::uid]);
+	}
+	template<typename T>
+	static std::vector<T*>& GetComponents()
+	{
+		return Utility<StructureManager>::get().getComponents<T>();
+	}
+private:
+	std::map<StructureComponent::UID, std::vector<StructureComponent*>> mComponents;
+
+public:
 	void addStructure(Structure* structure, Tile* tile);
 	void removeStructure(Structure* structure);
 

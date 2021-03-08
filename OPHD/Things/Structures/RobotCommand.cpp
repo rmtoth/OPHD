@@ -11,7 +11,7 @@
 /**
  * Gets whether the command facility has additional command capacity remaining.
  */
-bool RobotCommand::commandCapacityAvailable() const
+bool RobotCommandComponent::commandCapacityAvailable() const
 {
 	return mRobotList.size() < constants::ROBOT_COMMAND_CAPACITY;
 }
@@ -20,7 +20,7 @@ bool RobotCommand::commandCapacityAvailable() const
 /**
  * \param	robot	Pointer to a Robot.
  */
-bool RobotCommand::isControlling(Robot* robot) const
+bool RobotCommandComponent::isControlling(Robot* robot) const
 {
 	return find(mRobotList.begin(), mRobotList.end(), robot) != mRobotList.end();
 }
@@ -29,7 +29,7 @@ bool RobotCommand::isControlling(Robot* robot) const
 /**
  * Adds a robot to the management pool of the Robot Command structure.
  */
-void RobotCommand::addRobot(Robot* robot)
+void RobotCommandComponent::addRobot(Robot* robot)
 {
 	if (mRobotList.size() >= constants::ROBOT_COMMAND_CAPACITY)
 	{
@@ -48,7 +48,7 @@ void RobotCommand::addRobot(Robot* robot)
 /**
  * Removes a robot from the management pool of the Robot Command structure.
  */
-void RobotCommand::removeRobot(Robot* robot)
+void RobotCommandComponent::removeRobot(Robot* robot)
 {
 	mRobotList.erase(std::remove(mRobotList.begin(), mRobotList.end(), robot), mRobotList.end());
 }

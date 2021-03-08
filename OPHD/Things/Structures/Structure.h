@@ -18,8 +18,40 @@ enum class StructureState
 	Destroyed
 };
 
+class Structure;
+
+class StructureComponent
+{
+public:
+	typedef int UID;
+
+	// Every subclass of StructureComponent should have the following field:
+	//static constexpr UID uid = ...
+
+	// TODO: Do we want to make serialization part of StructureComponent or of the individual Structures?
+
+private:
+	Structure& mStructure;
+
+protected:
+	StructureComponent(Structure& structure) : mStructure(structure) {}
+
+public:
+	Structure& structure() { return mStructure; }
+};
+
 class Structure : public Thing
 {
+private:
+	std::map<StructureComponent::UID, StructureComponent*> mComponents;
+	void Attach(StructureComponent::UID, StructureComponent*);
+	StructureComponent* Get(StructureComponent::UID);
+protected:
+	template<typename T> void Attach(T* component) { Attach(T::uid, component); }
+public:
+	template<typename T> T* Get() { return (T*)Get(T::uid); }
+	// TODO: Remove components from StructureManager in dtor
+
 public:
 	/**
 	 * Class of a Structure.

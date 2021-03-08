@@ -66,7 +66,7 @@ static void readRccRobots(NAS2D::Xml::XmlAttribute* attr, Structure& structure, 
 		{
 			if (robot->id() == robotId)
 			{
-				static_cast<RobotCommand*>(&structure)->addRobot(robot);
+				structure.Get<RobotCommandComponent>()->addRobot(robot);
 				break;
 			}
 		}

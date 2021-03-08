@@ -9,6 +9,25 @@
 class Robot;
 
 
+class RobotCommandComponent : public StructureComponent
+{
+public:
+	static constexpr UID uid = 10;
+
+	RobotCommandComponent(Structure& structure) : StructureComponent(structure) {}
+
+	bool isControlling(Robot* robot) const;
+
+	bool commandCapacityAvailable() const;
+	void addRobot(Robot* robot);
+	void removeRobot(Robot* robot);
+
+	const std::vector<Robot*>& robots() { return mRobotList; }
+
+private:
+	std::vector<Robot*> mRobotList;
+};
+
 /**
  * Implements the Robot Command structure.
  */
@@ -24,22 +43,13 @@ public:
 		turnsToBuild(3);
 
 		requiresCHAP(false);
+
+		Attach(new RobotCommandComponent(*this));
 	}
-
-	bool isControlling(Robot* robot) const;
-
-	bool commandCapacityAvailable() const;
-	void addRobot(Robot* robot);
-	void removeRobot(Robot* robot);
-
-	const std::vector<Robot*>& robots() { return mRobotList; }
 
 protected:
 	void defineResourceInput() override
 	{
 		energyRequired(5);
 	}
-
-private:
-	std::vector<Robot*> mRobotList;
 };

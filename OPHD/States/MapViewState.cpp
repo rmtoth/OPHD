@@ -915,7 +915,7 @@ void MapViewState::placeRobodozer(Tile& tile)
 
 		if (structure->isRobotCommand())
 		{
-			deleteRobotsInRCC(robot, static_cast<RobotCommand*>(structure), mRobotPool, mRobotList, &tile);
+			deleteRobotsInRCC(robot, structure->Get<RobotCommandComponent>(), mRobotPool, mRobotList, &tile);
 		}
 
 		if (structure->isFactory() && static_cast<Factory*>(structure) == mFactoryProduction.factory())
@@ -1295,9 +1295,9 @@ void MapViewState::updateRobots()
 				tile->removeThing();
 			}
 
-			for (auto rcc : Utility<StructureManager>::get().structureList(Structure::StructureClass::RobotCommand))
+			for (auto rcc : StructureManager::GetComponents<RobotCommandComponent>())
 			{
-				static_cast<RobotCommand*>(rcc)->removeRobot(robot);
+				rcc->removeRobot(robot);
 			}
 
 			if (mRobotInspector.focusedRobot() == robot) { mRobotInspector.hide(); }

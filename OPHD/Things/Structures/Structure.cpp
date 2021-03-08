@@ -118,6 +118,29 @@ Structure::Structure(const std::string& name, const std::string& spritePath, con
 	mPopulationAvailable.fill(0);
 }
 
+void Structure::Attach(StructureComponent::UID uid, StructureComponent* component)
+{
+	bool success = mComponents.insert(std::make_pair(uid, component)).second;
+#if defined(_DEBUG)
+	if (!success)
+	{
+		std::cout << "Trying to attach duplicate component!!!" << std::endl;
+		throw std::runtime_error("Structure::Attach() was called on a Structure that already had the component!");
+	}
+#endif
+}
+
+StructureComponent* Structure::Get(StructureComponent::UID uid)
+{
+	auto it = mComponents.find(uid);
+	if (it != mComponents.end())
+		return it->second;
+	// TODO: decide if this should be an error.
+	// Not treating it like an error allows code like this:
+	// if (auto component = myStructure->Get<MyComponent>())
+	//    component->MyComponentMethod();
+	return nullptr;
+}
 
 /**
  * Sets a Disabled state for the Structure.
