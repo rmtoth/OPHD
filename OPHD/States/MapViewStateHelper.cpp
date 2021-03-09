@@ -214,7 +214,7 @@ bool landingSiteSuitable(TileMap* tilemap, NAS2D::Point<int> position)
 /**
  * Document me!
  */
-void deleteRobotsInRCC(Robot* robotToDelete, RobotCommandComponent* rcc, RobotPool& robotPool, RobotTileTable& rtt, Tile* /*tile*/)
+void deleteRobotsInRCC(Robot* robotToDelete, RobotCommand* rcc, RobotPool& robotPool, RobotTileTable& rtt, Tile* /*tile*/)
 {
 	if (rcc->isControlling(robotToDelete))
 	{
@@ -358,9 +358,9 @@ Warehouse* getAvailableWarehouse(ProductType type, std::size_t count)
  * \return	Returns a pointer to a Warehouse structure or \c nullptr if
  *			there are no warehouses available with the required space.
  */
-RobotCommandComponent* getAvailableRobotCommand()
+RobotCommand* getAvailableRobotCommand()
 {
-	for (auto rcc : StructureManager::GetComponents<RobotCommandComponent>())
+	for (auto rcc : StructureManager::GetComponents<RobotCommand>())
 	{
 		if (rcc->structure().operational() && rcc->commandCapacityAvailable())
 		{

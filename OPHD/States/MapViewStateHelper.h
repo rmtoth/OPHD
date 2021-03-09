@@ -21,7 +21,7 @@ namespace NAS2D {
 class Tile;
 class TileMap;
 class Warehouse; /**< Forward declaration for getAvailableWarehouse() function. */
-class RobotCommandComponent; /**< Forward declaration for getAvailableRobotCommand() function. */
+class RobotCommand; /**< Forward declaration for getAvailableRobotCommand() function. */
 class RobotPool;
 class Robot;
 struct StorableResources;
@@ -43,7 +43,7 @@ bool isPointInRange(NAS2D::Point<int> point1, NAS2D::Point<int> point2, int dist
 bool selfSustained(StructureID id);
 
 Warehouse* getAvailableWarehouse(ProductType type, std::size_t count);
-RobotCommandComponent* getAvailableRobotCommand();
+RobotCommand* getAvailableRobotCommand();
 
 bool simulateMoveProducts(Warehouse*);
 void moveProducts(Warehouse*);
@@ -60,4 +60,4 @@ void resetTileIndexFromDozer(Robot* robot, Tile* tile);
 void writeRobots(NAS2D::Xml::XmlElement* element, RobotPool& robotPool, RobotTileTable& robotMap);
 
 void updateRobotControl(RobotPool& robotPool);
-void deleteRobotsInRCC(Robot* robot, RobotCommandComponent* rcc, RobotPool& robotPool, RobotTileTable& rtt, Tile* tile);
+void deleteRobotsInRCC(Robot* robot, RobotCommand* rcc, RobotPool& robotPool, RobotTileTable& rtt, Tile* tile);

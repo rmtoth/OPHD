@@ -9,12 +9,12 @@
 class Robot;
 
 
-class RobotCommandComponent : public StructureComponent
+class RobotCommand : public StructureComponent
 {
 public:
 	static constexpr UID uid = 10;
 
-	RobotCommandComponent(Structure& structure) : StructureComponent(structure) {}
+	RobotCommand(Structure& structure) : StructureComponent(structure) {}
 
 	bool isControlling(Robot* robot) const;
 
@@ -31,10 +31,10 @@ private:
 /**
  * Implements the Robot Command structure.
  */
-class RobotCommand : public Structure
+class RobotCommandStructure : public Structure
 {
 public:
-	RobotCommand() : Structure(constants::ROBOT_COMMAND,
+	RobotCommandStructure() : Structure(constants::ROBOT_COMMAND,
 		"structures/robot_control.sprite",
 		StructureClass::RobotCommand,
 		StructureID::SID_ROBOT_COMMAND)
@@ -44,7 +44,7 @@ public:
 
 		requiresCHAP(false);
 
-		Attach(new RobotCommandComponent(*this));
+		Attach(new RobotCommand(*this));
 	}
 
 protected:

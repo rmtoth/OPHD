@@ -124,7 +124,7 @@ Structure* StructureCatalogue::get(StructureID type)
 			break;
 
 		case StructureID::SID_ROBOT_COMMAND:
-			structure = new RobotCommand();
+			structure = new RobotCommandStructure();
 			break;
 
 		case StructureID::SID_SEED_FACTORY:

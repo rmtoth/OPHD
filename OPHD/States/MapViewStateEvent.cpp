@@ -16,7 +16,7 @@
 
 void MapViewState::pullRobotFromFactory(ProductType pt, Factory& factory)
 {
-	RobotCommandComponent* rcc = getAvailableRobotCommand();
+	RobotCommand* rcc = getAvailableRobotCommand();
 
 	if ((rcc != nullptr) || mRobotPool.commandCapacityAvailable())
 	{
