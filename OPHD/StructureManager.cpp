@@ -229,9 +229,9 @@ void StructureManager::addStructure(Structure* structure, Tile* tile)
 		tile->removeThing();
 	}
 
-	for (auto component : structure->Components())
+	for (auto& component : structure->Components())
 	{
-		mComponents[component.first].push_back(component.second);
+		mComponents[component.first].push_back(component.second.get());
 	}
 
 	mStructureTileTable[structure] = tile;
@@ -258,6 +258,19 @@ void StructureManager::removeStructure(Structure* structure)
 	}
 	structures.erase(structureIt);
 
+	for (auto& component : structure->Components())
+	{
+		StructureComponent::UID uid = component.first;
+		StructureComponent* instance = component.second.get();
+		auto uidComponents = mComponents.at(uid);
+		auto componentIt = std::find(uidComponents.begin(), uidComponents.end(), instance);
+		if (componentIt == uidComponents.end())
+		{
+			throw std::runtime_error("StructureManager::removeStructure(): Attempting to remove a StructureComponent that is not managed by the StructureManager.");
+		}
+		uidComponents.erase(componentIt);
+	}
+
 	auto tileTableIt = mStructureTileTable.find(structure);
 	if (tileTableIt == mStructureTileTable.end())
 	{
@@ -267,19 +280,6 @@ void StructureManager::removeStructure(Structure* structure)
 	{
 		tileTableIt->second->deleteThing();
 		mStructureTileTable.erase(tileTableIt);
-	}
-
-	for (auto component : structure->Components())
-	{
-		StructureComponent::UID uid = component.first;
-		StructureComponent* instance = component.second;
-		auto uidComponents = mComponents.at(uid);
-		auto componentIt = std::find(uidComponents.begin(), uidComponents.end(), instance);
-		if (componentIt == uidComponents.end())
-		{
-			throw std::runtime_error("StructureManager::removeStructure(): Attempting to remove a StructureComponent that is not managed by the StructureManager.");
-		}
-		uidComponents.erase(componentIt);
 	}
 }
 

@@ -134,7 +134,7 @@ StructureComponent* Structure::Get(StructureComponent::UID uid)
 {
 	auto it = mComponents.find(uid);
 	if (it != mComponents.end())
-		return it->second;
+		return it->second.get();
 	// TODO: decide if this should be an error.
 	// Not treating it like an error allows code like this:
 	// if (auto component = myStructure->Get<MyComponent>())
