@@ -107,7 +107,7 @@ void MapViewState::updateCommercial()
 {
 	StructureManager& structureManager = NAS2D::Utility<StructureManager>::get();
 
-	const auto& _warehouses = structureManager.structureList(Structure::StructureClass::Warehouse);
+	const auto& _warehouses = structureManager.getComponents<Warehouse>();
 	const auto& _commercial = structureManager.structureList(Structure::StructureClass::Commercial);
 
 	// No need to do anything if there are no commercial structures.
@@ -118,7 +118,7 @@ void MapViewState::updateCommercial()
 
 	for (auto warehouse : _warehouses)
 	{
-		ProductPool& _pl = static_cast<Warehouse*>(warehouse)->products();
+		ProductPool& _pl = warehouse->products();
 
 		/**
 		 * inspect for luxury products.

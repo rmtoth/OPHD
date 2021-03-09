@@ -84,12 +84,12 @@ void WarehouseReport::computeTotalWarehouseCapacity()
 	int capacityTotal = 0;
 	int capacityAvailable = 0;
 
-	const auto& structures = Utility<StructureManager>::get().structureList(Structure::StructureClass::Warehouse);
+	const auto& structures = StructureManager::GetComponents<Warehouse>();
 	for (auto warehouseStructure : structures)
 	{
-		if (warehouseStructure->operational())
+		if (warehouseStructure->structure().operational())
 		{
-			const auto& warehouseProducts = static_cast<Warehouse*>(warehouseStructure)->products();
+			const auto& warehouseProducts = warehouseStructure->products();
 			capacityAvailable += warehouseProducts.availableStorage();
 			capacityTotal += warehouseProducts.capacity();
 		}
@@ -103,15 +103,16 @@ void WarehouseReport::computeTotalWarehouseCapacity()
 }
 
 
-void WarehouseReport::_fillListFromStructureList(const std::vector<Structure*>& list)
+void WarehouseReport::_fillListFromWarehouseList(const WarehouseList& list)
 {
-	for (auto structure : list)
+	for (auto warehouse : list)
 	{
+		Structure* structure = &warehouse->structure();
 		lstStructures.addItem(structure);
 		StructureListBox::StructureListBoxItem* item = lstStructures.last();
 
 		// \fixme	Abuse of interface to achieve custom results.
-		ProductPool& products = static_cast<Warehouse*>(structure)->products();
+		ProductPool& products = warehouse->products();
 
 		if (structure->state() != StructureState::Operational) { item->structureState = structure->stateDescription(); }
 		else if (products.empty()) { item->structureState = constants::WAREHOUSE_EMPTY; }
@@ -129,7 +130,7 @@ void WarehouseReport::fillLists()
 {
 	lstStructures.clear();
 
-	_fillListFromStructureList(Utility<StructureManager>::get().structureList(Structure::StructureClass::Warehouse));
+	_fillListFromWarehouseList(StructureManager::GetComponents<Warehouse>());
 
 	lstStructures.setSelection(0);
 	computeTotalWarehouseCapacity();
@@ -140,17 +141,16 @@ void WarehouseReport::fillListSpaceAvailable()
 {
 	lstStructures.clear();
 
-	StructureList list;
-	for (auto structure : Utility<StructureManager>::get().structureList(Structure::StructureClass::Warehouse))
+	WarehouseList list;
+	for (auto wh : StructureManager::GetComponents<Warehouse>())
 	{
-		Warehouse* wh = static_cast<Warehouse*>(structure);
-		if (!wh->products().atCapacity() && !wh->products().empty() && (wh->operational() || wh->isIdle()))
+		if (!wh->products().atCapacity() && !wh->products().empty() && (wh->structure().operational() || wh->structure().isIdle()))
 		{
-			list.push_back(structure);
+			list.push_back(wh);
 		}
 	}
 
-	_fillListFromStructureList(list);
+	_fillListFromWarehouseList(list);
 
 	lstStructures.setSelection(0);
 	computeTotalWarehouseCapacity();
@@ -162,17 +162,16 @@ void WarehouseReport::fillListFull()
 {
 	lstStructures.clear();
 
-	StructureList list;
-	for (auto structure : Utility<StructureManager>::get().structureList(Structure::StructureClass::Warehouse))
+	WarehouseList list;
+	for (auto wh : StructureManager::GetComponents<Warehouse>())
 	{
-		Warehouse* wh = static_cast<Warehouse*>(structure);
-		if (wh->products().atCapacity() && (wh->operational() || wh->isIdle()))
+		if (wh->products().atCapacity() && (wh->structure().operational() || wh->structure().isIdle()))
 		{
-			list.push_back(structure);
+			list.push_back(wh);
 		}
 	}
 
-	_fillListFromStructureList(list);
+	_fillListFromWarehouseList(list);
 
 	lstStructures.setSelection(0);
 	computeTotalWarehouseCapacity();
@@ -183,17 +182,16 @@ void WarehouseReport::fillListEmpty()
 {
 	lstStructures.clear();
 
-	StructureList list;
-	for (auto structure : Utility<StructureManager>::get().structureList(Structure::StructureClass::Warehouse))
+	WarehouseList list;
+	for (auto wh : StructureManager::GetComponents<Warehouse>())
 	{
-		Warehouse* wh = static_cast<Warehouse*>(structure);
-		if (wh->products().empty() && (wh->operational() || wh->isIdle()))
+		if (wh->products().empty() && (wh->structure().operational() || wh->structure().isIdle()))
 		{
-			list.push_back(structure);
+			list.push_back(wh);
 		}
 	}
 
-	_fillListFromStructureList(list);
+	_fillListFromWarehouseList(list);
 
 	lstStructures.setSelection(0);
 	computeTotalWarehouseCapacity();
@@ -204,16 +202,16 @@ void WarehouseReport::fillListDisabled()
 {
 	lstStructures.clear();
 
-	StructureList list;
-	for (auto structure : Utility<StructureManager>::get().structureList(Structure::StructureClass::Warehouse))
+	WarehouseList list;
+	for (auto wh : StructureManager::GetComponents<Warehouse>())
 	{
-		if (structure->disabled() || structure->destroyed())
+		if (wh->structure().disabled() || wh->structure().destroyed())
 		{
-			list.push_back(structure);
+			list.push_back(wh);
 		}
 	}
 
-	_fillListFromStructureList(list);
+	_fillListFromWarehouseList(list);
 
 	lstStructures.setSelection(0);
 	computeTotalWarehouseCapacity();
@@ -248,7 +246,7 @@ void WarehouseReport::refresh()
 void WarehouseReport::selectStructure(Structure* structure)
 {
 	lstStructures.setSelected(structure);
-	selectedWarehouse = static_cast<Warehouse*>(structure);
+	selectedWarehouse = structure;
 }
 
 
@@ -325,11 +323,11 @@ void WarehouseReport::btnTakeMeThereClicked()
 
 void WarehouseReport::lstStructuresSelectionChanged()
 {
-	selectedWarehouse = static_cast<Warehouse*>(lstStructures.selectedStructure());
+	selectedWarehouse = lstStructures.selectedStructure();
 
 	if (selectedWarehouse != nullptr)
 	{
-		lstProducts.productPool(selectedWarehouse->products());
+		lstProducts.productPool(selectedWarehouse->Get<Warehouse>()->products());
 	}
 
 	btnTakeMeThere.visible(selectedWarehouse != nullptr);

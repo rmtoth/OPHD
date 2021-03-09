@@ -434,7 +434,7 @@ void StructureManager::serialize(NAS2D::Xml::XmlElement* element)
 		if (structure->isWarehouse())
 		{
 			auto* warehouse_products = new NAS2D::Xml::XmlElement("warehouse_products");
-			static_cast<Warehouse*>(structure)->products().serialize(warehouse_products);
+			structure->Get<Warehouse>()->products().serialize(warehouse_products);
 			structureElement->linkEndChild(warehouse_products);
 		}
 

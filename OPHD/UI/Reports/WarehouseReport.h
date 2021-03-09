@@ -34,9 +34,10 @@ public:
 	void update() override;
 
 private:
+	using WarehouseList = std::vector<Warehouse*>;
 	void computeTotalWarehouseCapacity();
 
-	void _fillListFromStructureList(const std::vector<Structure*>&);
+	void _fillListFromWarehouseList(const WarehouseList&);
 
 	void _resized(Control*);
 
@@ -67,7 +68,7 @@ private:
 	const NAS2D::Font& fontBigBold;
 	const NAS2D::Image& imageWarehouse;
 
-	Warehouse* selectedWarehouse = nullptr;
+	Structure* selectedWarehouse = nullptr;
 
 	Button btnShowAll;
 	Button btnSpaceAvailable;

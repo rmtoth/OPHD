@@ -172,7 +172,7 @@ Structure* StructureCatalogue::get(StructureID type)
 			break;
 
 		case StructureID::SID_WAREHOUSE:
-			structure = new Warehouse();
+			structure = new WarehouseStructure();
 			break;
 
 

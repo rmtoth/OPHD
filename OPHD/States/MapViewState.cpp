@@ -535,7 +535,7 @@ void MapViewState::onMouseDown(EventHandler::MouseButton button, int /*x*/, int 
 			}
 			else if (structure->isWarehouse() && notDisabled && !inspectModifier)
 			{
-				mWarehouseInspector.warehouse(static_cast<Warehouse*>(structure));
+				mWarehouseInspector.warehouse(structure->Get<Warehouse>());
 				mWarehouseInspector.show();
 				mWindowStack.bringToFront(&mWarehouseInspector);
 			}
@@ -925,7 +925,7 @@ void MapViewState::placeRobodozer(Tile& tile)
 
 		if (structure->isWarehouse())
 		{
-			if (simulateMoveProducts(static_cast<Warehouse*>(structure))) { moveProducts(static_cast<Warehouse*>(structure)); }
+			if (simulateMoveProducts(structure->Get<Warehouse>())) { moveProducts(structure->Get<Warehouse>()); }
 			else { return; }
 		}
 

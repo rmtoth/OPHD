@@ -38,7 +38,7 @@ protected:
 
 public:
 	virtual ~StructureComponent() {}
-	Structure& structure() { return mStructure; }
+	Structure& structure() { return mStructure; } // TODO: might as well just make the reference public instead
 };
 
 class Structure : public Thing
