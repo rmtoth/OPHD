@@ -50,6 +50,7 @@ protected:
 	template<typename T> void Attach(T* component) { Attach(T::uid, component); }
 public:
 	template<typename T> T* Get() { return (T*)Get(T::uid); }
+	const std::map<StructureComponent::UID, StructureComponent*>& Components() { return mComponents; }
 	// TODO: Remove components from StructureManager in dtor
 
 public:
