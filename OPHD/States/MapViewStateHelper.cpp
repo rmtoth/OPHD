@@ -336,7 +336,7 @@ bool isPointInRange(NAS2D::Point<int> point1, NAS2D::Point<int> point2, int dist
  */
 Warehouse* getAvailableWarehouse(ProductType type, std::size_t count)
 {
-	for (auto warehouse : StructureManager::GetComponents<Warehouse>())
+	for (auto& [key,warehouse] : GetComponents<Warehouse>())
 	{
 		if (warehouse->products().canStore(type, static_cast<int>(count)))
 		{
@@ -359,7 +359,7 @@ Warehouse* getAvailableWarehouse(ProductType type, std::size_t count)
  */
 RobotCommand* getAvailableRobotCommand()
 {
-	for (auto rcc : StructureManager::GetComponents<RobotCommand>())
+	for (auto& [key, rcc] : GetComponents<RobotCommand>())
 	{
 		if (rcc->structure().operational() && rcc->commandCapacityAvailable())
 		{
@@ -382,7 +382,7 @@ RobotCommand* getAvailableRobotCommand()
 bool simulateMoveProducts(Warehouse* sourceWarehouse)
 {
 	ProductPool sourcePool = sourceWarehouse->products();
-	for (auto warehouse : StructureManager::GetComponents<Warehouse>())
+	for (auto& [key, warehouse] : GetComponents<Warehouse>())
 	{
 		if (warehouse->structure().operational())
 		{
@@ -412,7 +412,7 @@ bool simulateMoveProducts(Warehouse* sourceWarehouse)
  */
 void moveProducts(Warehouse* sourceWarehouse)
 {
-	for (auto warehouse : StructureManager::GetComponents<Warehouse>())
+	for (auto& [key,warehouse] : GetComponents<Warehouse>())
 	{
 		if (warehouse->structure().operational())
 		{

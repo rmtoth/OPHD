@@ -18,40 +18,17 @@ enum class StructureState
 	Destroyed
 };
 
-class Structure;
-
-class StructureComponent
-{
-public:
-	typedef int UID;
-
-	// Every subclass of StructureComponent should have the following field:
-	//static constexpr UID uid = ...
-
-	// TODO: Do we want to make serialization part of StructureComponent or of the individual Structures?
-
-private:
-	Structure& mStructure;
-
-protected:
-	StructureComponent(Structure& structure) : mStructure(structure) {}
-
-public:
-	virtual ~StructureComponent() {}
-	Structure& structure() { return mStructure; } // TODO: might as well just make the reference public instead
-};
-
 class Structure : public Thing
 {
 private:
-	std::map<StructureComponent::UID, std::unique_ptr<StructureComponent>> mComponents;
-	void Attach(StructureComponent::UID, StructureComponent*);
-	StructureComponent* Get(StructureComponent::UID);
+	//std::map<StructureComponent::UID, std::unique_ptr<StructureComponent>> mComponents;
+	//void Attach(StructureComponent::UID, StructureComponent*);
+	//StructureComponent* Get(StructureComponent::UID);
 protected:
-	template<typename T> void Attach(T* component) { Attach(T::uid, component); }
+	//template<typename T> void Attach(T* component) { Attach(T::uid, component); }
 public:
-	template<typename T> T* Get() { return (T*)Get(T::uid); }
-	const std::map<StructureComponent::UID, std::unique_ptr<StructureComponent>>& Components() { return mComponents; }
+	//template<typename T> T* Get() { return (T*)Get(T::uid); }
+	//const std::map<StructureComponent::UID, std::unique_ptr<StructureComponent>>& Components() { return mComponents; }
 	// TODO: Remove components from StructureManager in dtor
 
 public:

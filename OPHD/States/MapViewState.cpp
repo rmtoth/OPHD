@@ -535,7 +535,7 @@ void MapViewState::onMouseDown(EventHandler::MouseButton button, int /*x*/, int 
 			}
 			else if (structure->isWarehouse() && notDisabled && !inspectModifier)
 			{
-				mWarehouseInspector.warehouse(structure->Get<Warehouse>());
+				mWarehouseInspector.warehouse(GetComponent<Warehouse>(structure));
 				mWarehouseInspector.show();
 				mWindowStack.bringToFront(&mWarehouseInspector);
 			}
@@ -915,7 +915,7 @@ void MapViewState::placeRobodozer(Tile& tile)
 
 		if (structure->isRobotCommand())
 		{
-			deleteRobotsInRCC(robot, structure->Get<RobotCommand>(), mRobotPool, mRobotList, &tile);
+			deleteRobotsInRCC(robot, GetComponent<RobotCommand>(structure), mRobotPool, mRobotList, &tile);
 		}
 
 		if (structure->isFactory() && static_cast<Factory*>(structure) == mFactoryProduction.factory())
@@ -925,7 +925,7 @@ void MapViewState::placeRobodozer(Tile& tile)
 
 		if (structure->isWarehouse())
 		{
-			if (simulateMoveProducts(structure->Get<Warehouse>())) { moveProducts(structure->Get<Warehouse>()); }
+			if (simulateMoveProducts(GetComponent<Warehouse>(structure))) { moveProducts(GetComponent<Warehouse>(structure)); }
 			else { return; }
 		}
 
@@ -1295,7 +1295,7 @@ void MapViewState::updateRobots()
 				tile->removeThing();
 			}
 
-			for (auto rcc : StructureManager::GetComponents<RobotCommand>())
+			for (auto& [s,rcc] : GetComponents<RobotCommand>())
 			{
 				rcc->removeRobot(robot);
 			}

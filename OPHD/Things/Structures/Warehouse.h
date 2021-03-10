@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Structure.h"
+#include "../../StructureManager.h"
+#include <NAS2D/Utility.h>
 
 #include "../../ProductPool.h"
 
@@ -9,7 +11,7 @@ class Warehouse : public StructureComponent
 public:
 	static constexpr UID uid = 20;
 
-	Warehouse(Structure& structure) : StructureComponent(structure) {}
+	Warehouse(SKey structure) : StructureComponent(structure) {}
 
 	ProductPool& products() { return mProducts; }
 
@@ -30,7 +32,7 @@ public:
 
 		requiresCHAP(false);
 
-		Attach(new Warehouse(*this));
+		NAS2D::Utility<StructureManager>::get().create(this, new Warehouse(this));
 	}
 
 protected:

@@ -2,6 +2,8 @@
 
 #include "Structure.h"
 #include "../../Constants.h"
+#include "../../StructureManager.h"
+#include <NAS2D/Utility.h>
 
 #include <vector>
 
@@ -14,7 +16,7 @@ class RobotCommand : public StructureComponent
 public:
 	static constexpr UID uid = 10;
 
-	RobotCommand(Structure& structure) : StructureComponent(structure) {}
+	RobotCommand(SKey s) : StructureComponent(s) {}
 
 	bool isControlling(Robot* robot) const;
 
@@ -44,7 +46,7 @@ public:
 
 		requiresCHAP(false);
 
-		Attach(new RobotCommand(*this));
+		NAS2D::Utility<StructureManager>::get().create(this, new RobotCommand(this));
 	}
 
 protected:

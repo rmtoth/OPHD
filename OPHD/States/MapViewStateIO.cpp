@@ -66,7 +66,7 @@ static void readRccRobots(NAS2D::Xml::XmlAttribute* attr, Structure& structure, 
 		{
 			if (robot->id() == robotId)
 			{
-				structure.Get<RobotCommand>()->addRobot(robot);
+				GetComponent<RobotCommand>(&structure)->addRobot(robot);
 				break;
 			}
 		}
@@ -465,7 +465,7 @@ void MapViewState::readStructures(Xml::XmlElement* element)
 
 		if (structure.isWarehouse())
 		{
-			auto& warehouse = *structure.Get<Warehouse>();
+			auto& warehouse = *GetComponent<Warehouse>(&structure);
 			warehouse.products().deserialize(structureNode->firstChildElement("warehouse_products"));
 		}
 

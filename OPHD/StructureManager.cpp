@@ -26,6 +26,12 @@ namespace {
 }
 
 
+Structure& StructureComponent::structure() const
+{
+	return *GetComponent<Structure>(mKey);
+}
+
+
 bool StructureManager::CHAPAvailable()
 {
 	for (auto chap : mStructureLists[Structure::StructureClass::LifeSupport])
@@ -229,11 +235,6 @@ void StructureManager::addStructure(Structure* structure, Tile* tile)
 		tile->removeThing();
 	}
 
-	for (auto& component : structure->Components())
-	{
-		mComponents[component.first].push_back(component.second.get());
-	}
-
 	mStructureTileTable[structure] = tile;
 
 	mStructureLists[structure->structureClass()].push_back(structure);
@@ -258,18 +259,7 @@ void StructureManager::removeStructure(Structure* structure)
 	}
 	structures.erase(structureIt);
 
-	for (auto& component : structure->Components())
-	{
-		StructureComponent::UID uid = component.first;
-		StructureComponent* instance = component.second.get();
-		auto uidComponents = mComponents.at(uid);
-		auto componentIt = std::find(uidComponents.begin(), uidComponents.end(), instance);
-		if (componentIt == uidComponents.end())
-		{
-			throw std::runtime_error("StructureManager::removeStructure(): Attempting to remove a StructureComponent that is not managed by the StructureManager.");
-		}
-		uidComponents.erase(componentIt);
-	}
+	remove(structure);
 
 	auto tileTableIt = mStructureTileTable.find(structure);
 	if (tileTableIt == mStructureTileTable.end())
@@ -434,7 +424,7 @@ void StructureManager::serialize(NAS2D::Xml::XmlElement* element)
 		if (structure->isWarehouse())
 		{
 			auto* warehouse_products = new NAS2D::Xml::XmlElement("warehouse_products");
-			structure->Get<Warehouse>()->products().serialize(warehouse_products);
+			GetComponent<Warehouse>(structure)->products().serialize(warehouse_products);
 			structureElement->linkEndChild(warehouse_products);
 		}
 
@@ -442,7 +432,7 @@ void StructureManager::serialize(NAS2D::Xml::XmlElement* element)
 		{
 			auto* robotsElement = new NAS2D::Xml::XmlElement("robots");
 
-			const auto& robots = structure->Get<RobotCommand>()->robots();
+			const auto& robots = GetComponent<RobotCommand>(structure)->robots();
 
 			std::stringstream str;
 			for (std::size_t i = 0; i < robots.size(); ++i)

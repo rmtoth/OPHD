@@ -84,12 +84,12 @@ void WarehouseReport::computeTotalWarehouseCapacity()
 	int capacityTotal = 0;
 	int capacityAvailable = 0;
 
-	const auto& structures = StructureManager::GetComponents<Warehouse>();
-	for (auto warehouseStructure : structures)
+	const auto& structures = GetComponents<Warehouse>();
+	for (auto& [structure, warehouse] : structures)
 	{
-		if (warehouseStructure->structure().operational())
+		if (structure->operational())
 		{
-			const auto& warehouseProducts = warehouseStructure->products();
+			const auto& warehouseProducts = warehouse->products();
 			capacityAvailable += warehouseProducts.availableStorage();
 			capacityTotal += warehouseProducts.capacity();
 		}
@@ -105,9 +105,8 @@ void WarehouseReport::computeTotalWarehouseCapacity()
 
 void WarehouseReport::_fillListFromWarehouseList(const WarehouseList& list)
 {
-	for (auto warehouse : list)
+	for (auto& [structure, warehouse] : list)
 	{
-		Structure* structure = &warehouse->structure();
 		lstStructures.addItem(structure);
 		StructureListBox::StructureListBoxItem* item = lstStructures.last();
 
@@ -130,7 +129,7 @@ void WarehouseReport::fillLists()
 {
 	lstStructures.clear();
 
-	_fillListFromWarehouseList(StructureManager::GetComponents<Warehouse>());
+	_fillListFromWarehouseList(GetComponents<Warehouse>());
 
 	lstStructures.setSelection(0);
 	computeTotalWarehouseCapacity();
@@ -142,11 +141,11 @@ void WarehouseReport::fillListSpaceAvailable()
 	lstStructures.clear();
 
 	WarehouseList list;
-	for (auto wh : StructureManager::GetComponents<Warehouse>())
+	for (auto& [s,wh] : GetComponents<Warehouse>())
 	{
-		if (!wh->products().atCapacity() && !wh->products().empty() && (wh->structure().operational() || wh->structure().isIdle()))
+		if (!wh->products().atCapacity() && !wh->products().empty() && (s->operational() || s->isIdle()))
 		{
-			list.push_back(wh);
+			list.insert(std::make_pair(s,wh));
 		}
 	}
 
@@ -163,11 +162,11 @@ void WarehouseReport::fillListFull()
 	lstStructures.clear();
 
 	WarehouseList list;
-	for (auto wh : StructureManager::GetComponents<Warehouse>())
+	for (auto& [s, wh] : GetComponents<Warehouse>())
 	{
 		if (wh->products().atCapacity() && (wh->structure().operational() || wh->structure().isIdle()))
 		{
-			list.push_back(wh);
+			list.insert(std::make_pair(s, wh));
 		}
 	}
 
@@ -183,11 +182,11 @@ void WarehouseReport::fillListEmpty()
 	lstStructures.clear();
 
 	WarehouseList list;
-	for (auto wh : StructureManager::GetComponents<Warehouse>())
+	for (auto& [s, wh] : GetComponents<Warehouse>())
 	{
 		if (wh->products().empty() && (wh->structure().operational() || wh->structure().isIdle()))
 		{
-			list.push_back(wh);
+			list.insert(std::make_pair(s, wh));
 		}
 	}
 
@@ -203,11 +202,11 @@ void WarehouseReport::fillListDisabled()
 	lstStructures.clear();
 
 	WarehouseList list;
-	for (auto wh : StructureManager::GetComponents<Warehouse>())
+	for (auto& [s, wh] : GetComponents<Warehouse>())
 	{
 		if (wh->structure().disabled() || wh->structure().destroyed())
 		{
-			list.push_back(wh);
+			list.insert(std::make_pair(s, wh));
 		}
 	}
 
@@ -327,7 +326,7 @@ void WarehouseReport::lstStructuresSelectionChanged()
 
 	if (selectedWarehouse != nullptr)
 	{
-		lstProducts.productPool(selectedWarehouse->Get<Warehouse>()->products());
+		lstProducts.productPool(GetComponent<Warehouse>(selectedWarehouse)->products());
 	}
 
 	btnTakeMeThere.visible(selectedWarehouse != nullptr);
