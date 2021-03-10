@@ -13,6 +13,7 @@ class Tile;
 class PopulationPool;
 struct StorableResources;
 
+typedef Structure* SKey;
 
 /**
  * Handles structure updating and resource management for structures.

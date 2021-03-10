@@ -280,6 +280,7 @@ IF NOT "$(VcpkgCurrentInstalledDir)" == "" (
     <ClCompile Include="StructureCatalogue.cpp" />
     <ClCompile Include="StructureManager.cpp" />
     <ClCompile Include="Things\Robots\Robot.cpp" />
+    <ClCompile Include="Things\Structures\ECSTest.cpp" />
     <ClCompile Include="Things\Structures\Factory.cpp" />
     <ClCompile Include="Things\Structures\MineFacility.cpp" />
     <ClCompile Include="Things\Structures\RobotCommand.cpp" />
@@ -370,6 +371,7 @@ IF NOT "$(VcpkgCurrentInstalledDir)" == "" (
     <ClInclude Include="Things\Structures\Agridome.h" />
     <ClInclude Include="Things\Structures\Commercial.h" />
     <ClInclude Include="Things\Structures\CommTower.h" />
+    <ClInclude Include="Things\Structures\ECSTest.h" />
     <ClInclude Include="Things\Structures\Factory.h" />
     <ClInclude Include="Things\Structures\FoodProduction.h" />
     <ClInclude Include="Things\Structures\Laboratory.h" />
