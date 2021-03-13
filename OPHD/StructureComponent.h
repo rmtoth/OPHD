@@ -5,24 +5,43 @@
 
 class StructureManager;
 
+/**
+ * Key type for identifying a specific structure instance.
+ * The key for any given structure is guaranteed to remain unchanged for the lifetime of the structure.
+ * The key for any given structure is guaranteed to be unique during the lifetime of the structure.
+ *
+ * Every structure has a Structure instance. The Structure pointer is used as key to allow O(1) access
+ * to the Structure instance. This is an internal detail and should not be relied upon by code handling the key.
+ */
 typedef Structure* SKey;
 
+/**
+ * Common base class for all structure components.
+ * Each structure is associated with a set of components that define the functional properties of the structure.
+ * A structure either has a given component or not - it can never have multiple instances of the same component type.
+ *
+ * The StructureComponent base class is abstract in the sense that it cannot be constructed or queried.
+ * Component classes deriving from StructureComponent must declare the following field:
+ * static constexpr ComponentTypeID componentTypeID = ...;
+ */
 class StructureComponent
 {
 public:
-	typedef int ComponentTypeID;
-
-	// Every subclass of StructureComponent should have the following field:
-	//static constexpr ComponentTypeID componentTypeID = ...
+	typedef int ComponentTypeID; // TODO: replace by enum class.
 
 private:
-	SKey mKey;
+	SKey mKey; /**< Key of the structure owning this component. */
 
 protected:
 	StructureComponent(SKey key) : mKey(key) {}
 
 public:
 	virtual ~StructureComponent() {}
+
+	/**
+	 * Obtain a reference to the Structure instance belonging to this structure.
+	 * It is guaranteed to exist.
+	 */
 	Structure& structure() const { return *mKey; }
 };
 
