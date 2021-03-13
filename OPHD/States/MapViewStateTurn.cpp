@@ -116,9 +116,9 @@ void MapViewState::updateCommercial()
 	int luxuryCount = structureManager.getCountInState(Structure::StructureClass::Commercial, StructureState::Operational);
 	int commercialCount = luxuryCount;
 
-	for (auto& [key,warehouse] : _warehouses)
+	for (auto& warehouse : _warehouses)
 	{
-		ProductPool& _pl = warehouse->products();
+		ProductPool& _pl = warehouse.products();
 
 		/**
 		 * inspect for luxury products.

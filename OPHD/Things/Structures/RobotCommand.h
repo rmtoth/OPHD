@@ -14,7 +14,7 @@ class Robot;
 class RobotCommand : public StructureComponent
 {
 public:
-	static constexpr UID uid = 10;
+	static constexpr ComponentTypeID componentTypeID = 10;
 
 	RobotCommand(SKey s) : StructureComponent(s) {}
 

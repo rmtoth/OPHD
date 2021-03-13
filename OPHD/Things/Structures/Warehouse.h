@@ -9,7 +9,7 @@
 class Warehouse : public StructureComponent
 {
 public:
-	static constexpr UID uid = 20;
+	static constexpr ComponentTypeID componentTypeID = 20;
 
 	Warehouse(SKey structure) : StructureComponent(structure) {}
 

@@ -336,11 +336,11 @@ bool isPointInRange(NAS2D::Point<int> point1, NAS2D::Point<int> point2, int dist
  */
 Warehouse* getAvailableWarehouse(ProductType type, std::size_t count)
 {
-	for (auto& [key,warehouse] : GetComponents<Warehouse>())
+	for (auto& warehouse : GetComponents<Warehouse>())
 	{
-		if (warehouse->products().canStore(type, static_cast<int>(count)))
+		if (warehouse.products().canStore(type, static_cast<int>(count)))
 		{
-			return warehouse;
+			return &warehouse;
 		}
 	}
 
@@ -359,11 +359,11 @@ Warehouse* getAvailableWarehouse(ProductType type, std::size_t count)
  */
 RobotCommand* getAvailableRobotCommand()
 {
-	for (auto& [key, rcc] : GetComponents<RobotCommand>())
+	for (auto& rcc : GetComponents<RobotCommand>())
 	{
-		if (rcc->structure().operational() && rcc->commandCapacityAvailable())
+		if (rcc.structure().operational() && rcc.commandCapacityAvailable())
 		{
-			return rcc;
+			return &rcc;
 		}
 	}
 
@@ -382,13 +382,13 @@ RobotCommand* getAvailableRobotCommand()
 bool simulateMoveProducts(Warehouse* sourceWarehouse)
 {
 	ProductPool sourcePool = sourceWarehouse->products();
-	for (auto& [key, warehouse] : GetComponents<Warehouse>())
+	for (auto& warehouse : GetComponents<Warehouse>())
 	{
-		if (warehouse->structure().operational())
+		if (warehouse.structure().operational())
 		{
-			if (warehouse != sourceWarehouse)
+			if (&warehouse != sourceWarehouse)
 			{
-				ProductPool destinationPool = warehouse->products();
+				ProductPool destinationPool = warehouse.products();
 				sourcePool.transferAllTo(destinationPool);
 				if (sourcePool.empty())
 				{
@@ -412,13 +412,13 @@ bool simulateMoveProducts(Warehouse* sourceWarehouse)
  */
 void moveProducts(Warehouse* sourceWarehouse)
 {
-	for (auto& [key,warehouse] : GetComponents<Warehouse>())
+	for (auto& warehouse : GetComponents<Warehouse>())
 	{
-		if (warehouse->structure().operational())
+		if (warehouse.structure().operational())
 		{
-			if (warehouse != sourceWarehouse)
+			if (&warehouse != sourceWarehouse)
 			{
-				sourceWarehouse->products().transferAllTo(warehouse->products());
+				sourceWarehouse->products().transferAllTo(warehouse.products());
 			}
 		}
 	}

@@ -34,7 +34,7 @@ public:
 	void update() override;
 
 private:
-	using WarehouseList = std::map<Structure*,Warehouse*>;
+	using WarehouseList = std::vector<Warehouse*>;
 	void computeTotalWarehouseCapacity();
 
 	void _fillListFromWarehouseList(const WarehouseList&);

@@ -28,7 +28,7 @@ namespace {
 
 Structure& StructureComponent::structure() const
 {
-	return *GetComponent<Structure>(mKey);
+	return GetComponent<Structure>(mKey);
 }
 
 
@@ -424,7 +424,7 @@ void StructureManager::serialize(NAS2D::Xml::XmlElement* element)
 		if (structure->isWarehouse())
 		{
 			auto* warehouse_products = new NAS2D::Xml::XmlElement("warehouse_products");
-			GetComponent<Warehouse>(structure)->products().serialize(warehouse_products);
+			GetComponent<Warehouse>(structure).products().serialize(warehouse_products);
 			structureElement->linkEndChild(warehouse_products);
 		}
 
@@ -432,7 +432,7 @@ void StructureManager::serialize(NAS2D::Xml::XmlElement* element)
 		{
 			auto* robotsElement = new NAS2D::Xml::XmlElement("robots");
 
-			const auto& robots = GetComponent<RobotCommand>(structure)->robots();
+			const auto& robots = GetComponent<RobotCommand>(structure).robots();
 
 			std::stringstream str;
 			for (std::size_t i = 0; i < robots.size(); ++i)

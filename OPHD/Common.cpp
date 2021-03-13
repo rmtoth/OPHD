@@ -494,9 +494,9 @@ int getTruckAvailability()
 {
 	int trucksAvailable = 0;
 
-	for (auto& [key,warehouse] : GetComponents<Warehouse>())
+	for (auto& warehouse : GetComponents<Warehouse>())
 	{
-		trucksAvailable += warehouse->products().count(ProductType::PRODUCT_TRUCK);
+		trucksAvailable += warehouse.products().count(ProductType::PRODUCT_TRUCK);
 	}
 
 	return trucksAvailable;
@@ -509,9 +509,9 @@ int pullTruckFromInventory()
 
 	if (trucksAvailable == 0) { return 0; }
 
-	for (auto& [key,warehouse] : GetComponents<Warehouse>())
+	for (auto& warehouse : GetComponents<Warehouse>())
 	{
-		if (warehouse->products().pull(ProductType::PRODUCT_TRUCK, 1) > 0)
+		if (warehouse.products().pull(ProductType::PRODUCT_TRUCK, 1) > 0)
 		{
 			return 1;
 		}
@@ -525,11 +525,11 @@ int pushTruckIntoInventory()
 {
 	const int storageNeededForTruck = storageRequiredPerUnit(ProductType::PRODUCT_TRUCK);
 
-	for (auto& [key,warehouse] : GetComponents<Warehouse>())
+	for (auto& warehouse : GetComponents<Warehouse>())
 	{
-		if (warehouse->products().availableStorage() >= storageNeededForTruck)
+		if (warehouse.products().availableStorage() >= storageNeededForTruck)
 		{
-			warehouse->products().store(ProductType::PRODUCT_TRUCK, 1);
+			warehouse.products().store(ProductType::PRODUCT_TRUCK, 1);
 			return 1;
 		}
 	}
