@@ -78,6 +78,9 @@ public:
 
 	~Structure() override = default;
 
+	// Emulation function so that code using Structure subclasses can be transitioned to the StructureComponent syntax
+	Structure& structure() { return *this; }
+
 	// STATES & STATE MANAGEMENT
 	StructureState state() const { return mStructureState; }
 

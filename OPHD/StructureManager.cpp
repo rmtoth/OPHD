@@ -92,12 +92,11 @@ void StructureManager::updateEnergyProduction()
 	mTotalEnergyOutput = 0;
 	mTotalEnergyUsed = 0;
 
-	for (auto structure : mStructureLists[Structure::StructureClass::EnergyProduction])
+	for (auto& powerStructure : GetComponents<PowerStructure>())
 	{
-		auto powerStructure = static_cast<PowerStructure*>(structure);
-		if (powerStructure->operational())
+		if (powerStructure.structure().operational())
 		{
-			mTotalEnergyOutput += powerStructure->energyProduced();
+			mTotalEnergyOutput += powerStructure.energyProduced();
 		}
 	}
 }

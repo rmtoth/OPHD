@@ -266,7 +266,39 @@ inline Structure* TryGetComponent<Structure>(SKey s)
 }
 
 template<typename T>
-inline const ComponentRange<T> GetComponents()
+inline const ComponentRange<std::enable_if_t<!std::is_base_of_v<Structure,T>,T>> GetComponents()
 {
 	return NAS2D::Utility<StructureManager>::get().enumerate<T>();
+}
+
+// Compatibility layer. This allows updating code using a Structure subclass to the StructureComponent syntax without refactoring the structure subclass into a structure component.
+template<typename StructSubclass>
+class ComponentRangeEmulator
+{
+private:
+	class Iterator
+	{
+	private:
+		StructureList::const_iterator mIt;
+	public:
+		Iterator(StructureList::const_iterator it) : mIt(it) {}
+		bool operator!= (const Iterator& rhs) const { return mIt != rhs.mIt; }
+		Iterator& operator++() { ++mIt; return *this; }
+		operator StructSubclass* () { return static_cast<StructSubclass*>(*mIt); }
+	};
+
+	const StructureList& mComponents;
+
+public:
+	ComponentRangeEmulator(const StructureList& components) : mComponents(components) {}
+
+	Iterator begin() const { return Iterator(mComponents.begin()); }
+	Iterator end() const { return Iterator(mComponents.end()); }
+	size_t size() const { return mComponents.size(); }
+};
+
+template<typename T>
+inline const ComponentRangeEmulator<std::enable_if_t<std::is_base_of_v<Structure, T>, T>> GetComponents()
+{
+	return ComponentRangeEmulator<T>(NAS2D::Utility<StructureManager>::get().structureList(T::typeStructureClass));
 }
