@@ -26,12 +26,6 @@ namespace {
 }
 
 
-Structure& StructureComponent::structure() const
-{
-	return GetComponent<Structure>(mKey);
-}
-
-
 bool StructureManager::CHAPAvailable()
 {
 	for (auto chap : mStructureLists[Structure::StructureClass::LifeSupport])
