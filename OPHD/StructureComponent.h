@@ -5,6 +5,7 @@
 
 class StructureManager;
 
+
 /**
  * Key type for identifying a specific structure instance.
  * The key for any given structure is guaranteed to remain unchanged for the lifetime of the structure.
@@ -14,6 +15,7 @@ class StructureManager;
  * to the Structure instance. This is an internal detail and should not be relied upon by code handling the key.
  */
 typedef Structure* SKey;
+
 
 /**
  * Common base class for all structure components.
@@ -45,6 +47,12 @@ public:
 	Structure& structure() const { return *mKey; }
 };
 
+
+/**
+ * Object suitable for range-based for loops.
+ * This class allows code to iterate over instances of a given component
+ * without exposing the internal component storage container type.
+ */
 template<typename ComponentTy>
 class ComponentRange
 {
@@ -69,6 +77,11 @@ public:
 	Iterator end() const { return Iterator(mComponents.end()); }
 	size_t size() const { return mComponents.size(); }
 };
+
+/**
+ * Structure instances are stored with a different underlying container
+ * than other components.
+ */
 template<>
 class ComponentRange<Structure>
 {
@@ -84,40 +97,13 @@ public:
 	size_t size() const { return mComponents.size(); }
 };
 
-// Shorthand
-template<typename T>
-inline T& GetComponent(SKey s)
-{
-	return NAS2D::Utility<StructureManager>::get().get<T>(s);
-}
-
-// Special case if SKey is Structure*
-template<>
-inline Structure& GetComponent<Structure>(SKey s)
-{
-	return *s;
-}
-
-template<typename T>
-inline T* TryGetComponent(SKey s)
-{
-	return NAS2D::Utility<StructureManager>::get().tryGet<T>(s);
-}
-
-// Special case if SKey is Structure*
-template<>
-inline Structure* TryGetComponent<Structure>(SKey s)
-{
-	return s;
-}
-
-template<typename T>
-inline const ComponentRange<std::enable_if_t<!std::is_base_of_v<Structure,T>,T>> GetComponents()
-{
-	return NAS2D::Utility<StructureManager>::get().enumerate<T>();
-}
-
-// Compatibility layer. This allows updating code using a Structure subclass to the StructureComponent syntax without refactoring the structure subclass into a structure component.
+/**
+ * Compatibility layer. This allows updating code using a Structure subclass
+ * to the StructureComponent syntax without refactoring the structure subclass
+ * into a structure component.
+ * This class will be REMOVED once all Structure subclasses have been
+ * converted to StructureComponents.
+ */
 template<typename StructSubclass>
 class ComponentRangeEmulator
 {
@@ -143,6 +129,72 @@ public:
 	size_t size() const { return mComponents.size(); }
 };
 
+
+/**
+ * Return a reference to the given StructureComponent type belonging to
+ * a structure. The structure is assumed to have the given component,
+ * and it is an error to try to get a component from a structure that
+ * does not have it.
+ */
+template<typename T>
+inline T& GetComponent(SKey s)
+{
+	return NAS2D::Utility<StructureManager>::get().get<T>(s);
+}
+
+/**
+ * Return a reference to the Structure type belonging to a structure.
+ * This allows writing code that's agnostic to the SKey type.
+ */
+template<>
+inline Structure& GetComponent<Structure>(SKey s)
+{
+	return *s;
+}
+
+
+/**
+ * Return a pointer to the given StructureComponent type belonging
+ * to a structure, if it has the corresponding component type.
+ * Otherwise return nullptr.
+ */
+template<typename T>
+inline T* TryGetComponent(SKey s)
+{
+	return NAS2D::Utility<StructureManager>::get().tryGet<T>(s);
+}
+
+/**
+ * Return a pointer to the Structure type belonging to a structure.
+ * This allows writing code that's agnostic to the SKey type.
+ */
+template<>
+inline Structure* TryGetComponent<Structure>(SKey s)
+{
+	return s;
+}
+
+
+/**
+ * Returns a range object that can be used to iterate over all instances of the
+ * given StructureComponent type. It is suitable for use in range-based for loops.
+ *
+ * The enable_if condition will be REMOVED once all Structure subclasses have
+ * been converted to StructureComponents.
+ */
+template<typename T>
+inline const ComponentRange<std::enable_if_t<!std::is_base_of_v<Structure,T>,T>> GetComponents()
+{
+	return NAS2D::Utility<StructureManager>::get().enumerate<T>();
+}
+
+/**
+ * Returns a range object that can be used to iterate over all instances of the
+ * given Structure subclass. It is suitable for use in range-based for loops.
+ *
+ * This function will be REMOVED once all Structure subclasses have
+ * been converted to StructureComponents.
+ */
 template<typename T>
 inline const ComponentRangeEmulator<std::enable_if_t<std::is_base_of_v<Structure, T>, T>> GetComponents()
 {
