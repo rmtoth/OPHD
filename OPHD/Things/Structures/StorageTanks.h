@@ -7,6 +7,8 @@ const int StorageTanksCapacity = 1000;
 class StorageTanks : public Structure
 {
 public:
+	static constexpr StructureClass typeStructureClass = StructureClass::Storage;
+
 	StorageTanks() : Structure(constants::STORAGE_TANKS,
 		"structures/storage_tanks.sprite",
 		StructureClass::Storage,

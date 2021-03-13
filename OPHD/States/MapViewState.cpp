@@ -313,12 +313,16 @@ int MapViewState::refinedResourcesInStorage()
 
 void MapViewState::countPlayerResources()
 {
-	auto storage = NAS2D::Utility<StructureManager>::get().structureList(Structure::StructureClass::Storage);
+	auto storage = GetComponents<StorageTanks>();
+	// TODO: add Storage component to Command Centers and remove this and the duplicated for-loop
 	auto& command = NAS2D::Utility<StructureManager>::get().structureList(Structure::StructureClass::Command);
-	storage.insert(storage.begin(), command.begin(), command.end());
 
 	StorableResources resources;
-	for (auto structure : storage)
+	for (auto& structure : storage)
+	{
+		resources += structure.storage();
+	}
+	for (auto structure : command)
 	{
 		resources += structure->storage();
 	}

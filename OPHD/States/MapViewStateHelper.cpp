@@ -451,17 +451,14 @@ void resourceShortageMessage(const StorableResources& resources, StructureID sid
  */
 void addRefinedResources(StorableResources& resourcesToAdd)
 {
-	StructureList storage = NAS2D::Utility<StructureManager>::get().structureList(Structure::StructureClass::Storage);
-
+	// TODO: Add Storage component to Command Center and remove this
 	/**
 	 * The Command Center acts as backup storage especially during the beginning of the
 	 * game before storage tanks are built. This ensure that the CC is in the storage
 	 * structure list and that it's always the first structure in the list.
 	 */
 	auto& command = NAS2D::Utility<StructureManager>::get().structureList(Structure::StructureClass::Command);
-	storage.insert(storage.begin(), command.begin(), command.end());
-
-	for (auto structure : storage)
+	for (auto structure : command)
 	{
 		if (resourcesToAdd.isEmpty()) { break; }
 
@@ -469,6 +466,20 @@ void addRefinedResources(StorableResources& resourcesToAdd)
 
 		auto newResources = storageTanksResources + resourcesToAdd;
 		auto capped = newResources.cap(structure->storageCapacity() / 4);
+
+		storageTanksResources = capped;
+		resourcesToAdd = newResources - capped;
+	}
+	// TODO: End remove, retain only the code below
+
+	for (auto& structure : GetComponents<StorageTanks>())
+	{
+		if (resourcesToAdd.isEmpty()) { break; }
+
+		auto& storageTanksResources = structure.storage();
+
+		auto newResources = storageTanksResources + resourcesToAdd;
+		auto capped = newResources.cap(structure.storageCapacity() / 4);
 
 		storageTanksResources = capped;
 		resourcesToAdd = newResources - capped;
@@ -484,13 +495,22 @@ void addRefinedResources(StorableResources& resourcesToAdd)
  */
 void removeRefinedResources(StorableResources& resourcesToRemove)
 {
-	StructureList storage = NAS2D::Utility<StructureManager>::get().structureList(Structure::StructureClass::Storage);
+	for (auto& structure : GetComponents<StorageTanks>())
+	{
+		if (resourcesToRemove.isEmpty()) { break; }
 
+		auto& resourcesInStorage = structure.storage().resources;
+		for (size_t i = 0; i < resourcesInStorage.size(); ++i)
+		{
+			const int pulled = pullResource(resourcesInStorage[i], resourcesToRemove.resources[i]);
+			resourcesToRemove.resources[i] -= pulled;
+		}
+	}
+
+	// TODO: Add Storage component to Command Center and remove the remainder of this function below
 	// Command Center is backup storage, we want to pull from it last
 	auto& command = NAS2D::Utility<StructureManager>::get().structureList(Structure::StructureClass::Command);
-	storage.insert(storage.end(), command.begin(), command.end());
-
-	for (auto structure : storage)
+	for (auto structure : command)
 	{
 		if (resourcesToRemove.isEmpty()) { break; }
 
