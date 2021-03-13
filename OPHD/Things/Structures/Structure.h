@@ -20,17 +20,6 @@ enum class StructureState
 
 class Structure : public Thing
 {
-private:
-	//std::map<StructureComponent::UID, std::unique_ptr<StructureComponent>> mComponents;
-	//void Attach(StructureComponent::UID, StructureComponent*);
-	//StructureComponent* Get(StructureComponent::UID);
-protected:
-	//template<typename T> void Attach(T* component) { Attach(T::uid, component); }
-public:
-	//template<typename T> T* Get() { return (T*)Get(T::uid); }
-	//const std::map<StructureComponent::UID, std::unique_ptr<StructureComponent>>& Components() { return mComponents; }
-	// TODO: Remove components from StructureManager in dtor
-
 public:
 	/**
 	 * Class of a Structure.
