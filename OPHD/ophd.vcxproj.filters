@@ -297,9 +297,6 @@
     <ClCompile Include="UI\RobotInspector.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
-    <ClCompile Include="Things\Structures\ECSTest.cpp">
-      <Filter>Source Files\Things\Structures</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Cache.h">
@@ -667,9 +664,6 @@
     </ClInclude>
     <ClInclude Include="UI\RobotInspector.h">
       <Filter>Header Files\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="Things\Structures\ECSTest.h">
-      <Filter>Header Files\Things\Structures</Filter>
     </ClInclude>
     <ClInclude Include="StructureComponent.h">
       <Filter>Header Files</Filter>
