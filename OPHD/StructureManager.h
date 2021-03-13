@@ -21,24 +21,50 @@ struct StorableResources;
 class StructureManager
 {
 private:
-	std::map<StructureComponent::ComponentTypeID, std::map<SKey, StructureComponent*>> mComponents;
+	/**
+	 * Master table of all StructureComponent instances.
+	 * It is divided into one sub-table per StructureComponent type.
+	 * Each sub-table maps structure keys to a StructureComponent-derived instance.
+	 * Only keys to structures that actually have a given StructureComponent type
+	 * are present in the respective sub-tables.
+	 */
+	std::map<StructureComponent::ComponentTypeID, std::map<SKey, StructureComponent*>> mComponents; /**< Master list of all the StructureComponent instances. */
 
-	// Structure isn't a StructureComponent, so special case it.
+	/**
+	 * The Structure class isn't a StructureComponent, so we keep a separate list
+	 * of instances of that type rather than tracking them in mComponents.
+	 * This may change in the future if SKey changes into something other than Structure*.
+	 */
 	std::vector<Structure*> mStructures;
 
 public:
+	/**
+	 * Returns a range object that can be used to iterate over all instances of the
+	 * given StructureComponent type. It is suitable for use in range-based for loops.
+	 */
 	template<typename ComponentTy>
 	const ComponentRange<ComponentTy> enumerate()
 	{
 		return ComponentRange<ComponentTy>(mComponents[ComponentTy::componentTypeID]);
 	}
-	// Structure isn't a StructureComponent right now, so special case it.
+
+	/**
+	 * Returns a range object that can be used to iterate over all instances of the
+	 * Structure type. It is suitable for use in range-based for loops.
+	 * This allows writing code that's agnostic to whether Structure inherits StructureComponent.
+	 */
 	template<>
 	const ComponentRange<Structure> enumerate<Structure>()
 	{
 		return ComponentRange<Structure>(mStructures);
 	}
 
+	/**
+	 * Return a reference to the given StructureComponent type belonging to
+	 * a structure. The structure is assumed to have the given component,
+	 * and it is an error to try to get a component from a structure that
+	 * does not have it.
+	 */
 	template<typename ComponentTy>
 	ComponentTy& get(SKey s)
 	{
@@ -53,13 +79,22 @@ public:
 #endif
 		return *reinterpret_cast<ComponentTy*>(it->second);
 	}
-	// Structure isn't a StructureComponent right now, so special case it.
+
+	/**
+	 * Return a reference to the Structure type belonging to a structure.
+	 * This allows writing code that's agnostic to the SKey type.
+	 */
 	template<>
 	Structure& get<Structure>(SKey s)
 	{
 		return *s;
 	}
 
+	/**
+	 * Return a pointer to the given StructureComponent type belonging
+	 * to a structure, if it has the corresponding component type.
+	 * Otherwise return nullptr.
+	 */
 	template<typename ComponentTy>
 	ComponentTy* tryGet(SKey s)
 	{
@@ -69,7 +104,11 @@ public:
 			return reinterpret_cast<ComponentTy*>(it->second);
 		return nullptr;
 	}
-	// Structure isn't a StructureComponent right now, so special case it.
+
+	/**
+	 * Return a pointer to the Structure type belonging to a structure.
+	 * This allows writing code that's agnostic to the SKey type.
+	 */
 	template<>
 	Structure* tryGet<Structure>(SKey s)
 	{
