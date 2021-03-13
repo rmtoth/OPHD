@@ -115,6 +115,14 @@ public:
 		return s;
 	}
 
+	/**
+	 * Create a new structure associated to a Structure instance.
+	 * Returns a structure key identifying the new structure.
+	 *
+	 * WARNING: This may invalidate Structure iterators.
+	 *          If this becomes an issue, consider a different
+	 *          storage container for tracking Structure instances.
+	 */
 	SKey create(Structure* structure)
 	{
 #if defined(_DEBUG)
@@ -128,6 +136,11 @@ public:
 		return SKey(structure);
 	}
 
+	/**
+	 * Create a new structure associated to a Structure instance
+	 * and a set of structure component instances.
+	 * Returns a structure key identifying the new structure.
+	 */
 	template<typename ComponentTy, typename... AdditionalTys>
 	SKey create(Structure* structure, ComponentTy* component, AdditionalTys... additionalArgs)
 	{
@@ -142,33 +155,6 @@ public:
 		}
 #endif
 		return s;
-	}
-
-	void remove(SKey s)
-	{
-		auto it = std::find(mStructures.begin(), mStructures.end(), s);
-		if (it == mStructures.end())
-		{
-#if defined(_DEBUG)
-			std::cout << "Trying to remove an unknown structure!!!" << std::endl;
-			throw std::runtime_error("StructureManager::remove() was called on a Structure that's not managed!");
-#endif
-		}
-		else
-		{
-			mStructures.erase(it);
-		}
-
-		// Assumption: we do not know anything about the set of components belonging to the SKey.
-		for (auto& [componentTypeID, table] : mComponents)
-		{
-			auto cit = table.find(s);
-			if (cit != table.end())
-			{
-				delete cit->second;
-				table.erase(cit);
-			}
-		}
 	}
 
 public:
@@ -205,6 +191,8 @@ public:
 private:
 	using StructureTileTable = std::map<Structure*, Tile*>;
 	using StructureClassTable = std::map<Structure::StructureClass, StructureList>;
+
+	void remove(SKey s);
 
 	void updateStructures(const StorableResources&, PopulationPool&, StructureList&);
 

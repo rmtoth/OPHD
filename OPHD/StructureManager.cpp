@@ -26,6 +26,50 @@ namespace {
 }
 
 
+/**
+ * Destroys all components belonging to a structure and removes
+ * reference to the Structure instance from the component tracker.
+ *
+ * This function does NOT remove the structure from the legacy
+ * StructureClass tracker, nor does it remove it from the tile table.
+ *
+ * The Structure instance belonging to the structure is not destroyed
+ * by this function.
+*
+ * WARNING: This may invalidate Structure iterators.
+ *          If this becomes an issue, consider a different
+ *          storage container for tracking Structure instances.
+ */
+void StructureManager::remove(SKey s)
+{
+	// Linear search over all structures is inefficient, but
+	// this function is assumed to be executed only occasionally.
+	auto it = std::find(mStructures.begin(), mStructures.end(), s);
+	if (it == mStructures.end())
+	{
+#if defined(_DEBUG)
+		std::cout << "Trying to remove an unknown structure!!!" << std::endl;
+		throw std::runtime_error("StructureManager::remove() was called on a Structure that's not managed!");
+#endif
+	}
+	else
+	{
+		mStructures.erase(it);
+	}
+
+	// Assumption: we do not know anything about the set of components belonging to the SKey.
+	for (auto& [componentTypeID, table] : mComponents)
+	{
+		auto cit = table.find(s);
+		if (cit != table.end())
+		{
+			delete cit->second;
+			table.erase(cit);
+		}
+	}
+}
+
+
 bool StructureManager::CHAPAvailable()
 {
 	for (auto chap : mStructureLists[Structure::StructureClass::LifeSupport])
