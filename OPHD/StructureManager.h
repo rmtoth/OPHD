@@ -124,14 +124,9 @@ public:
 	 */
 	SKey create(Structure* structure)
 	{
-#if defined(_DEBUG)
-		if (std::find(mStructures.begin(), mStructures.end(), structure) != mStructures.end())
-		{
-			std::cout << "Trying to double-create a structure!!!" << std::endl;
-			throw std::runtime_error("StructureManager::create() was repeatedly called on a Structure!");
-		}
-#endif
-		mStructures.push_back(structure);
+		// The Structure pointer is not added to the tracking list at this point
+		// since not all structures are created with this function yet.
+		// It is instead tracked in addStructure.
 		return SKey(structure);
 	}
 
@@ -190,8 +185,6 @@ public:
 private:
 	using StructureTileTable = std::map<Structure*, Tile*>;
 	using StructureClassTable = std::map<Structure::StructureClass, StructureList>;
-
-	void remove(SKey s);
 
 	void updateStructures(const StorableResources&, PopulationPool&, StructureList&);
 

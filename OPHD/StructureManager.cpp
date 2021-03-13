@@ -26,56 +26,6 @@ namespace {
 }
 
 
-/**
- * Destroys all components belonging to a structure and removes
- * reference to the Structure instance from the component tracker.
- *
- * This function does NOT remove the structure from the legacy
- * StructureClass tracker, nor does it remove it from the tile table.
- *
- * The Structure instance belonging to the structure is not destroyed
- * by this function.
- *
- * WARNING: This may invalidate Structure iterators.
- *          If this becomes an issue, consider a different
- *          storage container for tracking Structure instances.
- */
-void StructureManager::remove(SKey s)
-{
-	// Linear search over all structures is inefficient, but
-	// this function is assumed to be executed only occasionally.
-	auto it = std::find(mStructures.begin(), mStructures.end(), &GetComponent<Structure>(s));
-	if (it == mStructures.end())
-	{
-		/**
-		 * TODO: Add this check once all structures are constructed with
-		 *       StructureManager::create. For now, structures that are
-		 *       not using the component system will take this path
-		 *       when destroyed.
-		 */
-//#if defined(_DEBUG)
-//		std::cout << "Trying to remove an unknown structure!!!" << std::endl;
-//		throw std::runtime_error("StructureManager::remove() was called on a Structure that's not managed!");
-//#endif
-	}
-	else
-	{
-		mStructures.erase(it);
-	}
-
-	// Assumption: we do not know anything about the set of components belonging to the SKey.
-	for (auto& [componentTypeID, table] : mComponents)
-	{
-		auto cit = table.find(s);
-		if (cit != table.end())
-		{
-			delete cit->second;
-			table.erase(cit);
-		}
-	}
-}
-
-
 bool StructureManager::CHAPAvailable()
 {
 	for (auto chap : mStructureLists[Structure::StructureClass::LifeSupport])
@@ -282,6 +232,15 @@ void StructureManager::addStructure(Structure* structure, Tile* tile)
 
 	mStructureLists[structure->structureClass()].push_back(structure);
 	tile->pushThing(structure);
+
+#if defined(_DEBUG)
+	if (std::find(mStructures.begin(), mStructures.end(), structure) != mStructures.end())
+	{
+		std::cout << "Trying to double-create a structure!!!" << std::endl;
+		throw std::runtime_error("StructureManager::create() was repeatedly called on a Structure!");
+	}
+#endif
+	mStructures.push_back(structure);
 }
 
 
@@ -293,6 +252,34 @@ void StructureManager::addStructure(Structure* structure, Tile* tile)
  */
 void StructureManager::removeStructure(Structure* structure)
 {
+	// Destroy all components belonging to the structure.
+	SKey s = SKey(structure);
+	for (auto& [componentTypeID, table] : mComponents)
+	{
+		auto cit = table.find(s);
+		if (cit != table.end())
+		{
+			delete cit->second;
+			table.erase(cit);
+		}
+	}
+
+	// Remove from Structure tracking list.
+	// Linear search over all structures is inefficient, but
+	// this function is assumed to be executed only occasionally.
+	auto it = std::find(mStructures.begin(), mStructures.end(), structure);
+	if (it == mStructures.end())
+	{
+#if defined(_DEBUG)
+		std::cout << "Trying to remove an unknown structure!!!" << std::endl;
+		throw std::runtime_error("StructureManager::remove() was called on a Structure that's not managed!");
+#endif
+	}
+	else
+	{
+		mStructures.erase(it);
+	}
+
 	StructureList& structures = mStructureLists[structure->structureClass()];
 
 	auto structureIt = std::find(structures.begin(), structures.end(), structure);
@@ -301,8 +288,6 @@ void StructureManager::removeStructure(Structure* structure)
 		throw std::runtime_error("StructureManager::removeStructure(): Attempting to remove a Structure that is not managed by the StructureManager.");
 	}
 	structures.erase(structureIt);
-
-	remove(structure);
 
 	auto tileTableIt = mStructureTileTable.find(structure);
 	if (tileTableIt == mStructureTileTable.end())
