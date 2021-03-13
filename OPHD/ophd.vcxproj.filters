@@ -672,7 +672,7 @@
       <Filter>Header Files\Things\Structures</Filter>
     </ClInclude>
     <ClInclude Include="StructureComponent.h">
-      <Filter>Header Files\Things\Structures</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
