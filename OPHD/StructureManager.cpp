@@ -35,7 +35,7 @@ namespace {
  *
  * The Structure instance belonging to the structure is not destroyed
  * by this function.
-*
+ *
  * WARNING: This may invalidate Structure iterators.
  *          If this becomes an issue, consider a different
  *          storage container for tracking Structure instances.
@@ -44,13 +44,19 @@ void StructureManager::remove(SKey s)
 {
 	// Linear search over all structures is inefficient, but
 	// this function is assumed to be executed only occasionally.
-	auto it = std::find(mStructures.begin(), mStructures.end(), s);
+	auto it = std::find(mStructures.begin(), mStructures.end(), &GetComponent<Structure>(s));
 	if (it == mStructures.end())
 	{
-#if defined(_DEBUG)
-		std::cout << "Trying to remove an unknown structure!!!" << std::endl;
-		throw std::runtime_error("StructureManager::remove() was called on a Structure that's not managed!");
-#endif
+		/**
+		 * TODO: Add this check once all structures are constructed with
+		 *       StructureManager::create. For now, structures that are
+		 *       not using the component system will take this path
+		 *       when destroyed.
+		 */
+//#if defined(_DEBUG)
+//		std::cout << "Trying to remove an unknown structure!!!" << std::endl;
+//		throw std::runtime_error("StructureManager::remove() was called on a Structure that's not managed!");
+//#endif
 	}
 	else
 	{

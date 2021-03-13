@@ -4,6 +4,7 @@
 #include <NAS2D/Utility.h>
 
 class StructureManager;
+class StructureComponent;
 
 
 /**
@@ -14,38 +15,19 @@ class StructureManager;
  * Every structure has a Structure instance. The Structure pointer is used as key to allow O(1) access
  * to the Structure instance. This is an internal detail and should not be relied upon by code handling the key.
  */
-typedef Structure* SKey;
-
-
-/**
- * Common base class for all structure components.
- * Each structure is associated with a set of components that define the functional properties of the structure.
- * A structure either has a given component or not - it can never have multiple instances of the same component type.
- *
- * The StructureComponent base class is abstract in the sense that it cannot be constructed or queried.
- * Component classes deriving from StructureComponent must declare the following field:
- * static constexpr ComponentTypeID componentTypeID = ...;
- */
-class StructureComponent
+class SKey
 {
-public:
-	typedef int ComponentTypeID; // TODO: replace by enum class.
-
 private:
-	SKey mKey; /**< Key of the structure owning this component. */
-
-protected:
-	StructureComponent(SKey key) : mKey(key) {}
-
+	Structure* mStructure;
 public:
-	virtual ~StructureComponent() {}
+	SKey(Structure* structure) : mStructure(structure) {}
 
-	/**
-	 * Obtain a reference to the Structure instance belonging to this structure.
-	 * It is guaranteed to exist.
-	 */
-	Structure& structure() const { return *mKey; }
+	bool operator<(const SKey& rhs) const { return mStructure < rhs.mStructure; }
+
+	/** Do not call this function directly. It is intended only for GetComponent/TryGetComponent.*/
+	Structure* getInternal() { return mStructure; }
 };
+//typedef Structure* SKey;
 
 
 /**
@@ -149,7 +131,7 @@ inline T& GetComponent(SKey s)
 template<>
 inline Structure& GetComponent<Structure>(SKey s)
 {
-	return *s;
+	return *s.getInternal();
 }
 
 
@@ -171,7 +153,7 @@ inline T* TryGetComponent(SKey s)
 template<>
 inline Structure* TryGetComponent<Structure>(SKey s)
 {
-	return s;
+	return s.getInternal();
 }
 
 
@@ -200,3 +182,34 @@ inline const ComponentRangeEmulator<std::enable_if_t<std::is_base_of_v<Structure
 {
 	return ComponentRangeEmulator<T>(NAS2D::Utility<StructureManager>::get().structureList(T::typeStructureClass));
 }
+
+
+/**
+ * Common base class for all structure components.
+ * Each structure is associated with a set of components that define the functional properties of the structure.
+ * A structure either has a given component or not - it can never have multiple instances of the same component type.
+ *
+ * The StructureComponent base class is abstract in the sense that it cannot be constructed or queried.
+ * Component classes deriving from StructureComponent must declare the following field:
+ * static constexpr ComponentTypeID componentTypeID = ...;
+ */
+class StructureComponent
+{
+public:
+	typedef int ComponentTypeID; // TODO: replace by enum class.
+
+private:
+	SKey mKey; /**< Key of the structure owning this component. */
+
+protected:
+	StructureComponent(SKey key) : mKey(key) {}
+
+public:
+	virtual ~StructureComponent() {}
+
+	/**
+	 * Obtain a reference to the Structure instance belonging to this structure.
+	 * It is guaranteed to exist.
+	 */
+	Structure& structure() const { return GetComponent<Structure>(mKey); }
+};

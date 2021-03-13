@@ -68,16 +68,15 @@ public:
 	template<typename ComponentTy>
 	ComponentTy& get(SKey s)
 	{
-		auto& table = mComponents[ComponentTy::componentTypeID];
-		auto it = table.find(s);
+		ComponentTy* component = tryGet<ComponentTy>(s);
 #if defined(_DEBUG)
-		if (it == table.end())
+		if (!component)
 		{
 			std::cout << "Trying to get a component from a structure that does not have it!!!" << std::endl;
 			throw std::runtime_error("StructureManager::get() was called on a Structure without the requested component!");
 		}
 #endif
-		return *reinterpret_cast<ComponentTy*>(it->second);
+		return *component;
 	}
 
 	/**
@@ -87,7 +86,7 @@ public:
 	template<>
 	Structure& get<Structure>(SKey s)
 	{
-		return *s;
+		return *s.getInternal();
 	}
 
 	/**
@@ -112,7 +111,7 @@ public:
 	template<>
 	Structure* tryGet<Structure>(SKey s)
 	{
-		return s;
+		return s.getInternal();
 	}
 
 	/**
