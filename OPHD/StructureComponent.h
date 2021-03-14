@@ -27,7 +27,6 @@ public:
 	/** Do not call this function directly. It is intended only for GetComponent/TryGetComponent.*/
 	Structure* getInternal() { return mStructure; }
 };
-//typedef Structure* SKey;
 
 
 /**
