@@ -309,6 +309,9 @@
     <ClCompile Include="Things\Structures\CommandCenter.cpp">
       <Filter>Source Files\Things\Structures</Filter>
     </ClCompile>
+    <ClCompile Include="Things\Structures\AirShaft.cpp">
+      <Filter>Source Files\Things\Structures</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Cache.h">
@@ -343,9 +346,6 @@
     </ClInclude>
     <ClInclude Include="Things\Robots\Robots.h">
       <Filter>Header Files\Things\Robots</Filter>
-    </ClInclude>
-    <ClInclude Include="Things\Structures\AirShaft.h">
-      <Filter>Header Files\Things\Structures</Filter>
     </ClInclude>
     <ClInclude Include="Things\Structures\MineFacility.h">
       <Filter>Header Files\Things\Structures</Filter>

@@ -1,6 +1,8 @@
 #include "Structure.h"
 
 #include "../../Constants.h"
+#include "../../StructureManager.h"
+#include "../../Map/Tile.h"
 
 
 /**
@@ -221,7 +223,16 @@ const std::string& Structure::classDescription(Structure::StructureClass structu
  */
 void Structure::activate()
 {
-	sprite().play(constants::STRUCTURE_STATE_OPERATIONAL);
+	std::string operationalAnimation = constants::STRUCTURE_STATE_OPERATIONAL;
+	if (mSeparateUgAnimation)
+	{
+		// TODO: Why doesn't the Structure instance know where it's located?
+		Tile& tile = NAS2D::Utility<StructureManager>::get().tileFromStructure(this);
+		if (tile.depth() > 0)
+			operationalAnimation = constants::STRUCTURE_STATE_OPERATIONAL_UG;
+	}
+	sprite().play(operationalAnimation);
+
 	enable();
 
 	defineResourceInput();
@@ -273,13 +284,17 @@ void Structure::destroy()
 /**
  * Provided for loading purposes.
  */
-void Structure::forced_state_change(StructureState structureState, DisabledReason disabledReason, IdleReason idleReason)
+void Structure::forced_state_change(StructureState structureState, DisabledReason disabledReason, IdleReason idleReason, bool ug)
 {
 	defineResourceInput();
 
 	if (age() >= turnsToBuild())
 	{
-		sprite().play(constants::STRUCTURE_STATE_OPERATIONAL);
+		std::string operationalAnimation = constants::STRUCTURE_STATE_OPERATIONAL;
+		if (mSeparateUgAnimation && ug)
+			operationalAnimation = constants::STRUCTURE_STATE_OPERATIONAL_UG;
+		sprite().play(operationalAnimation);
+
 		//enable();
 	}
 

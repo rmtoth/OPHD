@@ -35,7 +35,7 @@ Structure* StructureCatalogue::get(StructureID type)
 			break;
 
 		case StructureID::SID_AIR_SHAFT:
-			structure = new AirShaft();
+			structure = CreateAirShaft();
 			break;
 
 		case StructureID::SID_CARGO_LANDER: // only here for loading games

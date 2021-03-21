@@ -6,10 +6,9 @@
 Structure* CreateAgridomeStructure();
 Structure* CreateCommandCenter();
 Structure* CreateRobotCommandStructure();
-
+Structure* CreateAirShaft();
 
 // Includes all Structures
-#include "AirShaft.h"
 #include "CargoLander.h"
 #include "CHAP.h"
 #include "ColonistLander.h"

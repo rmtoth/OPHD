@@ -415,11 +415,6 @@ void MapViewState::readStructures(Xml::XmlElement* element)
 			mineFacility.extensionComplete().connect(this, &MapViewState::mineFacilityExtended);
 		}
 
-		if (structureId == StructureID::SID_AIR_SHAFT && depth != 0)
-		{
-			static_cast<AirShaft*>(&structure)->ug(); // force underground state
-		}
-
 		if (structureId == StructureID::SID_SEED_LANDER)
 		{
 			static_cast<SeedLander*>(&structure)->position({x, y});
@@ -432,8 +427,9 @@ void MapViewState::readStructures(Xml::XmlElement* element)
 			GetComponent<FoodProduction>(&structure).deserialize(*foodProduction);
 		}
 
+		bool ug = depth > 0;
 		structure.age(age);
-		structure.forced_state_change(static_cast<StructureState>(state), static_cast<DisabledReason>(disabled_reason), static_cast<IdleReason>(idle_reason));
+		structure.forced_state_change(static_cast<StructureState>(state), static_cast<DisabledReason>(disabled_reason), static_cast<IdleReason>(idle_reason), ug);
 		structure.connectorDirection(static_cast<ConnectorDir>(direction));
 
 		if (forced_idle != 0) { structure.forceIdle(forced_idle != 0); }

@@ -123,6 +123,7 @@ public:
 	bool providesCHAP() const { return structureClass() == StructureClass::LifeSupport; }
 	bool selfSustained() const { return mSelfSustained; }
 	bool repairable() const { return mRepairable; }
+	bool separateUgAnimation() const { return mSeparateUgAnimation; }
 
 	// CONVENIENCE FUCNTIONS
 	bool isFactory() const { return structureClass() == StructureClass::Factory; }
@@ -142,7 +143,7 @@ public:
 	void age(int newAge) { mAge = newAge; }
 	void connectorDirection(ConnectorDir dir) { mConnectorDirection = dir; }
 
-	virtual void forced_state_change(StructureState, DisabledReason, IdleReason);
+	virtual void forced_state_change(StructureState, DisabledReason, IdleReason, bool ug);
 
 	void update() override;
 	virtual void think() {}
@@ -171,6 +172,7 @@ public: // TODO: Constructor object?
 
 	void requiresCHAP(bool value) { mRequiresCHAP = value; }
 	void selfSustained(bool value) { mSelfSustained = value; }
+	void separateUgAnimation(bool value) { mSeparateUgAnimation = value; }
 
 	void setPopulationRequirements(const PopulationRequirements& pr) { mPopulationRequirements = pr; }
 	void energyRequired(int energy) { mEnergyRequirement = energy; }
@@ -219,6 +221,7 @@ private:
 	bool mRequiresCHAP = true; /**< Indicates that the Structure needs to have an active CHAP facility in order to operate. */
 	bool mSelfSustained = false; /**< Indicates that the Structure is self contained and can operate by itself. */
 	bool mForcedIdle = false; /**< Indicates that the Structure was manually set to Idle by the user and should remain that way until the user says otherwise. */
+	bool mSeparateUgAnimation = false;
 };
 
 

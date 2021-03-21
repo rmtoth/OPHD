@@ -1,4 +1,3 @@
-#include "CommandCenter.h"
 #include "FoodProduction.h"
 #include "../../StructureManager.h"
 #include "../../Constants/Strings.h"
@@ -9,6 +8,8 @@ Structure* CreateCommandCenter()
 		"structures/command_center.sprite",
 		Structure::StructureClass::Command,
 		StructureID::SID_COMMAND_CENTER);
+
+	printf("Creating Command Center: %p\n", structure);
 
 	structure->maxAge(500);
 	structure->turnsToBuild(4);
