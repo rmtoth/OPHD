@@ -9,8 +9,6 @@ Structure* CreateCommandCenter()
 		Structure::StructureClass::Command,
 		StructureID::SID_COMMAND_CENTER);
 
-	printf("Creating Command Center: %p\n", structure);
-
 	structure->maxAge(500);
 	structure->turnsToBuild(4);
 	structure->requiresCHAP(false);
