@@ -7,6 +7,7 @@
 
 #include "../Map/TileMap.h"
 #include "../Things/Structures/Structures.h"
+#include "../Things/Structures/FoodProduction.h"
 
 #include "../Cache.h"
 #include "../Common.h"
@@ -21,14 +22,14 @@
 #include <algorithm>
 
 
-static inline void pullFoodFromStructure(FoodProduction* producer, int& remainder)
+static inline void pullFoodFromStructure(FoodProduction& producer, int& remainder)
 {
 	if (remainder <= 0) { return; }
 
-	int foodLevel = producer->foodLevel();
+	int foodLevel = producer.foodLevel();
 	int pulled = pullResource(foodLevel, remainder);
 
-	producer->foodLevel(foodLevel);
+	producer.foodLevel(foodLevel);
 	remainder -= pulled;
 }
 
@@ -89,16 +90,11 @@ void MapViewState::updatePopulation()
 	int nurseries = structureManager.getCountInState(Structure::StructureClass::Nursery, StructureState::Operational);
 	int hospitals = structureManager.getCountInState(Structure::StructureClass::MedicalCenter, StructureState::Operational);
 
-	auto foodproducers = structureManager.structureList(Structure::StructureClass::FoodProduction);
-	auto& command = structureManager.structureList(Structure::StructureClass::Command);
-	foodproducers.insert(foodproducers.end(), command.begin(), command.end());
-
 	int remainder = mPopulation.update(mCurrentMorale, mFood, residences, universities, nurseries, hospitals);
 
-	for (auto structure : foodproducers)
+	for (auto& producer : GetComponents<FoodProduction>())
 	{
-		FoodProduction* foodProducer = static_cast<FoodProduction*>(structure);
-		pullFoodFromStructure(foodProducer, remainder);
+		pullFoodFromStructure(producer, remainder);
 	}
 }
 
@@ -410,48 +406,38 @@ void MapViewState::countFood()
 {
 	mFood = 0;
 
-	auto structures = NAS2D::Utility<StructureManager>::get().structureList(Structure::StructureClass::FoodProduction);
-	auto& command = NAS2D::Utility<StructureManager>::get().structureList(Structure::StructureClass::Command);
-
-	structures.insert(structures.begin(), command.begin(), command.end());
-
-	for (auto structure : structures)
+	for (auto& producer : GetComponents<FoodProduction>())
 	{
-		if (structure->operational() || structure->isIdle())
-		{
-			mFood += static_cast<FoodProduction*>(structure)->foodLevel();
-		}
+		mFood += producer.foodLevel();
 	}
 }
 
 
 void MapViewState::transferFoodToCommandCenter()
 {
-	auto& foodProducers = NAS2D::Utility<StructureManager>::get().structureList(Structure::StructureClass::FoodProduction);
-	auto& command = NAS2D::Utility<StructureManager>::get().structureList(Structure::StructureClass::Command);
-
-	auto foodProducerIterator = foodProducers.begin();
-	for (auto cc : command)
+	for (auto& cc : GetComponents<FoodProduction>())
 	{
-		if (!cc->operational()) { continue; }
+		if (cc.structure().structureId() != SID_COMMAND_CENTER)
+			continue;
+		if (!cc.structure().operational())
+			continue;
 
-		CommandCenter* commandCenter = static_cast<CommandCenter*>(cc);
-		int foodToMove = commandCenter->foodCapacity() - commandCenter->foodLevel();
+		int foodToMove = cc.foodCapacity() - cc.foodLevel();
+		if (!foodToMove)
+			continue;
 
-		while (foodProducerIterator != foodProducers.end())
+		// This doesn't have to be an O(n^2) loop, but this is easier to follow
+		for (auto& producer : GetComponents<FoodProduction>())
 		{
-			auto foodProducer = static_cast<FoodProduction*>(*foodProducerIterator);
-			const int foodMoved = std::clamp(foodToMove, 0, foodProducer->foodLevel());
-			foodProducer->foodLevel(foodProducer->foodLevel() - foodMoved);
-			commandCenter->foodLevel(commandCenter->foodLevel() + foodMoved);
+			if (producer.structure().structureId() == SID_COMMAND_CENTER)
+				continue;
 
-			foodToMove -= foodMoved;
+			const int foodMoved = producer.pull(foodToMove);
+			cc.add(foodMoved);
 
-			if (foodToMove == 0) { return; }
-			
-			++foodProducerIterator;
+			if (!foodToMove)
+				break;
 		}
-		
 	}
 }
 

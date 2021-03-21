@@ -3,6 +3,8 @@
 #include "../Cache.h"
 #include "../Constants.h"
 #include "../Things/Structures/Structure.h"
+#include "../Things/Structures/FoodProduction.h" // TODO: Remov
+#include "../StructureManager.h"
 #include "StringTable.h"
 #include "TextRender.h"
 
@@ -124,6 +126,16 @@ void StructureInspector::update()
 
 void StructureInspector::drawStructureSpecificTable(NAS2D::Point<int> position, NAS2D::Renderer& renderer)
 {
+	// TODO: a structure can have multiple components with different info.
+	// Make this better.
+	if (auto info = TryGetComponent<FoodProductionInspectorViewComponent>(mStructure))
+	{
+		StringTable stringTable = info->createInspectorViewTable();
+		stringTable.computeRelativeCellPositions();
+		stringTable.position(position);
+		stringTable.draw(renderer);
+		position.y = stringTable.screenRect().endPoint().y + 25;
+	}
 	StringTable stringTable = mStructure->createInspectorViewTable();
 	stringTable.computeRelativeCellPositions();
 	stringTable.position(position);

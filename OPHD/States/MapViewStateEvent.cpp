@@ -10,6 +10,7 @@
 #include "../Map/TileMap.h"
 #include "../Things/Robots/Robots.h"
 #include "../Things/Structures/Structures.h"
+#include "../Things/Structures/FoodProduction.h"
 
 #include <NAS2D/Utility.h>
 
@@ -111,8 +112,8 @@ void MapViewState::deployColonistLander()
  */
 void MapViewState::deployCargoLander()
 {
-	auto cc = static_cast<CommandCenter*>(mTileMap->getTile(ccLocation(), 0).structure());
-	cc->foodLevel(cc->foodLevel() + 125);
+	auto cc = mTileMap->getTile(ccLocation(), 0).structure();
+	GetComponent<FoodProduction>(cc).add(125);
 	cc->storage() += StorableResources{ 25, 25, 15, 15 };
 
 	updateStructuresAvailability();
@@ -145,7 +146,7 @@ void MapViewState::deploySeedLander(NAS2D::Point<int> point)
 	// TOP ROW
 	structureManager.addStructure(new SeedPower(), &mTileMap->getTile(point + DirectionNorthWest));
 
-	CommandCenter* cc = static_cast<CommandCenter*>(StructureCatalogue::get(StructureID::SID_COMMAND_CENTER));
+	Structure* cc = StructureCatalogue::get(StructureID::SID_COMMAND_CENTER);
 	cc->sprite().setFrame(3);
 	structureManager.addStructure(cc, &mTileMap->getTile(point + DirectionNorthEast));
 	ccLocation() = point + DirectionNorthEast;

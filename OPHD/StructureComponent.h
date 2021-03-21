@@ -2,6 +2,7 @@
 
 #include "Things/Structures/Structure.h"
 #include <NAS2D/Utility.h>
+#include <NAS2D/Xml/XmlElement.h>
 
 class StructureManager;
 class StructureComponent;
@@ -46,7 +47,8 @@ private:
 		Iterator(std::map<SKey, StructureComponent*>::iterator it) : mIt(it) {}
 		bool operator!= (const Iterator& rhs) const { return mIt != rhs.mIt; }
 		Iterator& operator++() { ++mIt; return *this; }
-		operator ComponentTy* () { return static_cast<ComponentTy*>(mIt->second); }
+		operator ComponentTy* () const { return static_cast<ComponentTy*>(mIt->second); }
+		ComponentTy* operator->() const { return static_cast<ComponentTy*>(mIt->second); }
 	};
 
 	std::map<SKey, StructureComponent*>& mComponents;
@@ -97,7 +99,8 @@ private:
 		Iterator(StructureList::const_iterator it) : mIt(it) {}
 		bool operator!= (const Iterator& rhs) const { return mIt != rhs.mIt; }
 		Iterator& operator++() { ++mIt; return *this; }
-		operator StructSubclass* () { return static_cast<StructSubclass*>(*mIt); }
+		operator StructSubclass* () const { return static_cast<StructSubclass*>(*mIt); }
+		StructSubclass* operator->() const { return static_cast<StructSubclass*>(*mIt); }
 	};
 
 	const StructureList& mComponents;
@@ -211,4 +214,17 @@ public:
 	 * It is guaranteed to exist.
 	 */
 	Structure& structure() const { return GetComponent<Structure>(mKey); }
+
+	/**
+	 * Convenience function to get a different component type from the same structure.
+	 */
+	template<typename T> T& Get() { return GetComponent<T>(mKey); }
+
+	/**
+	 * Convenience function to get a different component type from the same structure.
+	 */
+	template<typename T> T* TryGet() { return TryGetComponent<T>(mKey); }
+
+	virtual NAS2D::Xml::XmlElement* serialize() const { return nullptr; } // TODO: Make pure virtual
+	virtual void deserialize(const NAS2D::Xml::XmlElement&) {}
 };

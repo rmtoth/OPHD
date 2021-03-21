@@ -32,7 +32,7 @@ Structure* StructureCatalogue::get(StructureID type)
 	switch (type)
 	{
 		case StructureID::SID_AGRIDOME:
-			structure = new Agridome();
+			structure = CreateAgridomeStructure();
 			break;
 
 		case StructureID::SID_AIR_SHAFT:
@@ -52,7 +52,7 @@ Structure* StructureCatalogue::get(StructureID type)
 			break;
 
 		case StructureID::SID_COMMAND_CENTER:
-			structure = new CommandCenter();
+			structure = CreateCommandCenter();
 			break;
 
 		case StructureID::SID_COMMERCIAL:

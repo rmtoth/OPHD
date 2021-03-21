@@ -12,6 +12,7 @@
 #include "../StructureCatalogue.h"
 #include "../StructureManager.h"
 #include "../Map/TileMap.h"
+#include "../Things/Structures/FoodProduction.h" // TODO: This shouldn't be necessary
 
 #include <NAS2D/Utility.h>
 #include <NAS2D/Filesystem.h>
@@ -424,19 +425,11 @@ void MapViewState::readStructures(Xml::XmlElement* element)
 			static_cast<SeedLander*>(&structure)->position({x, y});
 		}
 
-		if (structureId == StructureID::SID_AGRIDOME ||
-			structureId == StructureID::SID_COMMAND_CENTER)
+		// TODO: Automatically load all child elements as components
+		auto foodProduction = structureNode->firstChildElement("food");
+		if (foodProduction)
 		{
-			auto& foodProduction = *static_cast<FoodProduction*>(&structure);
-
-			auto foodStorage = structureNode->firstChildElement("food");
-			if (foodStorage == nullptr)
-			{
-				throw std::runtime_error("MapViewState::readStructures(): FoodProduction structure saved without a food level node.");
-			}
-
-			auto foodLevel = foodStorage->attribute("level");
-			foodProduction.foodLevel(std::stoi(foodLevel));
+			GetComponent<FoodProduction>(&structure).deserialize(*foodProduction);
 		}
 
 		structure.age(age);

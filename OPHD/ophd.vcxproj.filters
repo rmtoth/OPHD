@@ -82,6 +82,9 @@
     <Filter Include="Source Files\MicroPather">
       <UniqueIdentifier>{53d69791-75af-4014-99df-f2d2582597ca}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Components">
+      <UniqueIdentifier>{28ddc69e-5f76-4784-b9e8-c4b8f075b73b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -296,6 +299,15 @@
     </ClCompile>
     <ClCompile Include="UI\RobotInspector.cpp">
       <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Things\Structures\FoodProduction.cpp">
+      <Filter>Source Files\Things\Structures</Filter>
+    </ClCompile>
+    <ClCompile Include="Things\Structures\Agridome.cpp">
+      <Filter>Source Files\Things\Structures</Filter>
+    </ClCompile>
+    <ClCompile Include="Things\Structures\CommandCenter.cpp">
+      <Filter>Source Files\Things\Structures</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -667,6 +679,9 @@
     </ClInclude>
     <ClInclude Include="StructureComponent.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Components\InspectorViewComponent.h">
+      <Filter>Header Files\Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

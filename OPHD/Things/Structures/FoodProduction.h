@@ -1,6 +1,17 @@
 #pragma once
 
-#include "Structure.h"
+#include "../../Components/InspectorViewComponent.h"
+
+class FoodProductionInspectorViewComponent : public InspectorViewComponent
+{
+public:
+	static constexpr ComponentTypeID componentTypeID = 31;
+
+	FoodProductionInspectorViewComponent(SKey key) : InspectorViewComponent(key) {}
+
+	StringTable createInspectorViewTable() override;
+};
+
 
 /**
 * \class	FoodProduction
@@ -8,32 +19,29 @@
 *
 * \note	FoodProduction is an abstract class
 */
-class FoodProduction : public Structure
+class FoodProduction : public StructureComponent
 {
 public:
-	FoodProduction(const std::string& name, const std::string& spritePath, StructureClass structureClass, StructureID id) :
-		Structure(name, spritePath, structureClass, id) {}
+	static constexpr ComponentTypeID componentTypeID = 30;
 
-	StringTable createInspectorViewTable() override
-	{
-		StringTable stringTable(2, 2);
+	FoodProduction(SKey key) : StructureComponent(key) {}
 
-		stringTable[{0, 0}].text = "Food Stored:";
-		stringTable[{1, 0}].text = std::to_string(mFoodLevel) + " / " + std::to_string(foodCapacity());
-
-		stringTable[{0, 1}].text = "Production Rate:";
-		stringTable[{1, 1}].text = std::to_string(calculateProduction());
-
-		return stringTable;
-	}
+	NAS2D::Xml::XmlElement* serialize() const override;
+	void deserialize(const NAS2D::Xml::XmlElement& element) override;
 
 	int foodLevel() const { return mFoodLevel; }
-	void foodLevel(int level) { mFoodLevel = std::clamp(level, 0, foodCapacity()); }
+	void foodLevel(int level) { mFoodLevel = std::clamp(level, 0, mFoodCapacity); }
+	int foodCapacity() { return mFoodCapacity; }
+	void foodCapacity(int capacity) { mFoodCapacity = capacity; }
+	int foodProduction() { return std::min(mFoodProduction, mFoodCapacity - mFoodLevel); }
+	void foodProduction(int production) { mFoodProduction = production; }
 
-	virtual int foodCapacity() = 0;
+	void produceOrDecay();
+	void add(int amount);
+	int pull(int& amount);
 
 protected:
-	virtual int calculateProduction() = 0;
-
 	int mFoodLevel = 0;
+	int mFoodCapacity = 0;
+	int mFoodProduction = 0;
 };

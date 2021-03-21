@@ -7,6 +7,7 @@
 #include "Map/Tile.h"
 #include "Things/Robots/Robot.h"
 #include "Things/Structures/Structures.h"
+#include "Things/Structures/FoodProduction.h" // TODO: Move to Components/
 
 #include "States/MapViewStateHelper.h" // <-- For removeRefinedResources()
 
@@ -78,6 +79,9 @@ void StructureManager::update(const StorableResources& resources, PopulationPool
 	updateStructures(resources, population, mStructureLists[Structure::StructureClass::Undefined]);
 
 	assignColonistsToResidences(population);
+
+	for (auto& food : GetComponents<FoodProduction>())
+		food.produceOrDecay();
 }
 
 
@@ -473,12 +477,11 @@ void StructureManager::serialize(NAS2D::Xml::XmlElement* element)
 			structureElement->linkEndChild(robotsElement);
 		}
 
-		if (structure->structureClass() == Structure::StructureClass::FoodProduction ||
-			structure->structureId() == StructureID::SID_COMMAND_CENTER)
+		// TODO: Loop over all components of the structure, rather than explicitly enumerating them here
+		if (auto food = tryGet<FoodProduction>(structure))
 		{
-			auto* food = new NAS2D::Xml::XmlElement("food");
-			food->attribute("level", static_cast<FoodProduction*>(structure)->foodLevel());
-			structureElement->linkEndChild(food);
+			auto e = food->serialize();
+			structureElement->linkEndChild(e);
 		}
 
 		if (structure->structureClass() == Structure::StructureClass::Residence)
