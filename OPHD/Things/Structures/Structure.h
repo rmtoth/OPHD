@@ -120,7 +120,6 @@ public:
 
 	// FLAGS
 	bool requiresCHAP() const { return mRequiresCHAP; }
-	bool providesCHAP() const { return structureClass() == StructureClass::LifeSupport; }
 	bool selfSustained() const { return mSelfSustained; }
 	bool repairable() const { return mRepairable; }
 	bool separateUgAnimation() const { return mSeparateUgAnimation; }

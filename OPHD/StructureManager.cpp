@@ -29,9 +29,9 @@ namespace {
 
 bool StructureManager::CHAPAvailable()
 {
-	for (auto chap : mStructureLists[Structure::StructureClass::LifeSupport])
+	for (auto& chap : GetComponents<CHAP>())
 	{
-		if (chap->operational()) { return true; }
+		if (chap.structure().operational()) { return true; }
 	}
 
 	return false;

@@ -43,7 +43,7 @@ Structure* StructureCatalogue::get(StructureID type)
 			break;
 
 		case StructureID::SID_CHAP:
-			structure = new CHAP();
+			structure = CreateCHAP();
 			break;
 
 		case StructureID::SID_COLONIST_LANDER: // only here for loading games

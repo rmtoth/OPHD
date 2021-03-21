@@ -1,22 +1,12 @@
 #pragma once
 
 #include "Structure.h"
+#include "../../StructureComponent.h"
 
-class CHAP : public Structure
+class CHAP : public StructureComponent
 {
 public:
-	CHAP() : Structure(constants::CHAP, "structures/chap.sprite", StructureClass::LifeSupport, StructureID::SID_CHAP)
-	{
-		maxAge(600);
-		turnsToBuild(5);
+	static constexpr ComponentTypeID componentTypeID = 50;
 
-		requiresCHAP(false);
-	}
-
-protected:
-	void defineResourceInput() override
-	{
-		resourcesIn({ 2, 0, 1, 1 });
-		energyRequired(10);
-	}
+	CHAP(SKey key) : StructureComponent(key) {}
 };

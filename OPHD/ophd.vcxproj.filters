@@ -312,6 +312,9 @@
     <ClCompile Include="Things\Structures\AirShaft.cpp">
       <Filter>Source Files\Things\Structures</Filter>
     </ClCompile>
+    <ClCompile Include="Things\Structures\CHAP.cpp">
+      <Filter>Source Files\Things\Structures</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Cache.h">

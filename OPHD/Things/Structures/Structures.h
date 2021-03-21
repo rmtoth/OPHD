@@ -7,6 +7,7 @@ Structure* CreateAgridomeStructure();
 Structure* CreateCommandCenter();
 Structure* CreateRobotCommandStructure();
 Structure* CreateAirShaft();
+Structure* CreateCHAP();
 
 // Includes all Structures
 #include "CargoLander.h"

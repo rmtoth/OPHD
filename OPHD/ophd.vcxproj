@@ -282,6 +282,7 @@ IF NOT "$(VcpkgCurrentInstalledDir)" == "" (
     <ClCompile Include="Things\Robots\Robot.cpp" />
     <ClCompile Include="Things\Structures\Agridome.cpp" />
     <ClCompile Include="Things\Structures\AirShaft.cpp" />
+    <ClCompile Include="Things\Structures\CHAP.cpp" />
     <ClCompile Include="Things\Structures\CommandCenter.cpp" />
     <ClCompile Include="Things\Structures\Factory.cpp" />
     <ClCompile Include="Things\Structures\FoodProduction.cpp" />
