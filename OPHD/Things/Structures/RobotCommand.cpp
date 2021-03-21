@@ -7,6 +7,23 @@
 #include <stdexcept>
 #include <algorithm>
 
+Structure* CreateRobotCommandStructure()
+{
+	Structure* structure = new Structure(constants::ROBOT_COMMAND,
+		"structures/robot_control.sprite",
+		Structure::StructureClass::RobotCommand,
+		StructureID::SID_ROBOT_COMMAND);
+
+	structure->maxAge(500);
+	structure->turnsToBuild(3);
+	structure->requiresCHAP(false);
+	structure->energyRequired(5);
+
+	NAS2D::Utility<StructureManager>::get().create(structure, new RobotCommand(structure));
+
+	return structure;
+}
+
 
 /**
  * Gets whether the command facility has additional command capacity remaining.

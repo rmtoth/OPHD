@@ -31,27 +31,6 @@ private:
 };
 
 /**
- * Implements the Robot Command structure.
+ * Creates the Robot Command structure.
  */
-class RobotCommandStructure : public Structure
-{
-public:
-	RobotCommandStructure() : Structure(constants::ROBOT_COMMAND,
-		"structures/robot_control.sprite",
-		StructureClass::RobotCommand,
-		StructureID::SID_ROBOT_COMMAND)
-	{
-		maxAge(500);
-		turnsToBuild(3);
-
-		requiresCHAP(false);
-
-		NAS2D::Utility<StructureManager>::get().create(this, new RobotCommand(this));
-	}
-
-protected:
-	void defineResourceInput() override
-	{
-		energyRequired(5);
-	}
-};
+Structure* CreateRobotCommandStructure();

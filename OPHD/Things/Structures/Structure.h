@@ -152,7 +152,8 @@ public:
 	*/
 	virtual StringTable createInspectorViewTable() { return StringTable(0, 0); }
 
-protected:
+//protected:
+public: // TODO: Constructor object?
 	friend class StructureCatalogue;
 
 	void turnsToBuild(int newTurnsToBuild) { mTurnsToBuild = newTurnsToBuild; }
