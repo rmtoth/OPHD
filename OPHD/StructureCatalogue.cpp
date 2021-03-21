@@ -13,7 +13,6 @@ float StructureCatalogue::mMeanSolarDistance = 0;
  *	lowered for actual gameplay with modifiers to improve efficiency. */
 const float DEFAULT_RECYCLE_VALUE = 0.9f;
 
-
 /**
  * Gets a new Structure object given a StructureID.
  * 

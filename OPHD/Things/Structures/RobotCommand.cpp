@@ -2,6 +2,7 @@
 
 #include "../Robots/Robot.h"
 #include "../../Constants.h"
+#include "../../StructureManager.h"
 
 #include <string>
 #include <stdexcept>

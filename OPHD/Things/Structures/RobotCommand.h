@@ -1,15 +1,9 @@
 #pragma once
 
-#include "Structure.h"
-#include "../../Constants.h"
-#include "../../StructureManager.h"
-#include <NAS2D/Utility.h>
-
+#include "../../StructureComponent.h"
 #include <vector>
 
-
 class Robot;
-
 
 class RobotCommand : public StructureComponent
 {
@@ -29,8 +23,3 @@ public:
 private:
 	std::vector<Robot*> mRobotList;
 };
-
-/**
- * Creates the Robot Command structure.
- */
-Structure* CreateRobotCommandStructure();
