@@ -328,6 +328,7 @@ IF NOT "$(VcpkgCurrentInstalledDir)" == "" (
     <ClCompile Include="UI\TileInspector.cpp" />
     <ClCompile Include="UI\WarehouseInspector.cpp" />
     <ClCompile Include="WindowEventWrapper.h" />
+    <ClCompile Include="XmlSerializer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Cache.h" />
@@ -451,6 +452,7 @@ IF NOT "$(VcpkgCurrentInstalledDir)" == "" (
     <ClInclude Include="UI\UI.h" />
     <ClInclude Include="UI\WarehouseInspector.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="XmlSerializer.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="ophd.rc" />

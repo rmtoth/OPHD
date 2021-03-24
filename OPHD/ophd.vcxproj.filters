@@ -315,6 +315,9 @@
     <ClCompile Include="Things\Structures\CHAP.cpp">
       <Filter>Source Files\Things\Structures</Filter>
     </ClCompile>
+    <ClCompile Include="XmlSerializer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Cache.h">
@@ -679,6 +682,9 @@
     </ClInclude>
     <ClInclude Include="Components\InspectorViewComponent.h">
       <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="XmlSerializer.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
